@@ -11845,6 +11845,9 @@ header.style-3.two .main-menu>ul>li.active>a i {
 /*=====================================
   11. Home1 Partner Section CSS
 ========================================*/
+/* =============================
+   PARTNER / MAIN SERVICES TITLE
+============================= */
 .partner-section .partner-title {
   margin-bottom: 40px;
   text-align: center;
@@ -11871,12 +11874,15 @@ header.style-3.two .main-menu>ul>li.active>a i {
   }
 }
 
+
+/* =============================
+   MARQUEE WRAPPER
+============================= */
 .partner-section .partner-wrap .marquee {
   display: flex;
   gap: 80px;
   overflow: hidden;
-  -webkit-user-select: none;
-  -moz-user-select: none;
+  white-space: nowrap;
   user-select: none;
 }
 
@@ -11892,14 +11898,45 @@ header.style-3.two .main-menu>ul>li.active>a i {
   }
 }
 
+
+/* =============================
+   MODULE ITEM (ICON + NAME)
+============================= */
+.module-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  width: 80px; /* Equal width for all items */
+}
+
+.module-item img {
+  width: 50px !important;
+  height: 50px !important;
+  object-fit: contain;
+}
+
+.module-item span {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: #333;
+}
+
+
+/* =============================
+   SCROLLING MARQUEE
+============================= */
 .partner-section .partner-wrap .marquee .marquee__group {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  gap: 80px;
+  gap: 40px;
   min-width: 100%;
-  animation: scroll-x 30s linear infinite;
+  animation: scroll-x 25s linear infinite;
 }
 
 @media (max-width: 1199px) {
@@ -11910,31 +11947,27 @@ header.style-3.two .main-menu>ul>li.active>a i {
 
 @media (max-width: 576px) {
   .partner-section .partner-wrap .marquee .marquee__group {
-    gap: 20px;
+    gap: 25px;
   }
 }
 
+
+/* =============================
+   REMOVE OLD IMAGE STYLING
+   (Fix conflict with module-item img)
+============================= */
 .partner-section .partner-wrap .marquee .marquee__group a img {
-  width: 162px;
+  width: unset !important;
 }
 
-@media (max-width: 1199px) {
-  .partner-section .partner-wrap .marquee .marquee__group a img {
-    width: 155px;
-  }
-}
 
-@media (max-width: 576px) {
-  .partner-section .partner-wrap .marquee .marquee__group a img {
-    width: 140px;
-  }
-}
-
+/* =============================
+   ANIMATION KEYFRAME
+============================= */
 @keyframes scroll-x {
   from {
     transform: translateX(0);
   }
-
   to {
     transform: translateX(-100%);
   }
@@ -19058,6 +19091,7 @@ header.style-3.two .main-menu>ul>li.active>a i {
   object-fit: cover;
   border-radius: 50px;
 }
+
 .home4-banner-section .banner-video-area img {
   width: 100%;
   min-height: 750px;
@@ -19072,6 +19106,7 @@ header.style-3.two .main-menu>ul>li.active>a i {
     min-height: 630px;
     height: 630px;
   }
+
   .home4-banner-section .banner-video-area img {
     min-height: 630px;
     height: 630px;
@@ -19084,6 +19119,7 @@ header.style-3.two .main-menu>ul>li.active>a i {
     height: 610px;
     border-radius: 40px;
   }
+
   .home4-banner-section .banner-video-area img {
     min-height: 610px;
     height: 610px;
@@ -19097,6 +19133,7 @@ header.style-3.two .main-menu>ul>li.active>a i {
     height: 600px;
     border-radius: 30px;
   }
+
   .home4-banner-section .banner-video-area img {
     min-height: 600px;
     height: 600px;
@@ -19109,6 +19146,7 @@ header.style-3.two .main-menu>ul>li.active>a i {
     min-height: 780px;
     height: 780px;
   }
+
   .home4-banner-section .banner-video-area img {
     min-height: 780px;
     height: 780px;
@@ -19121,6 +19159,7 @@ header.style-3.two .main-menu>ul>li.active>a i {
     height: 470px;
     border-radius: 15px;
   }
+
   .home4-banner-section .banner-video-area img {
     min-height: 470px;
     height: 470px;
@@ -21087,6 +21126,7 @@ header.style-3.two .main-menu>ul>li.active>a i {
   -o-object-fit: cover;
   object-fit: cover;
 }
+
 .home5-banner-section .banner-wrapper .banner-video-area img {
   width: 100%;
   min-height: 800px;
@@ -21100,6 +21140,7 @@ header.style-3.two .main-menu>ul>li.active>a i {
     min-height: 680px;
     height: 680px;
   }
+
   .home5-banner-section .banner-wrapper .banner-video-area img {
     min-height: 680px;
     height: 680px;
@@ -21111,6 +21152,7 @@ header.style-3.two .main-menu>ul>li.active>a i {
     min-height: 640px;
     height: 640px;
   }
+
   .home5-banner-section .banner-wrapper .banner-video-area img {
     min-height: 640px;
     height: 640px;
@@ -21122,6 +21164,7 @@ header.style-3.two .main-menu>ul>li.active>a i {
     min-height: 600px;
     height: 600px;
   }
+
   .home5-banner-section .banner-wrapper .banner-video-area img {
     min-height: 600px;
     height: 600px;
@@ -21133,6 +21176,7 @@ header.style-3.two .main-menu>ul>li.active>a i {
     min-height: 580px;
     height: 580px;
   }
+
   .home5-banner-section .banner-wrapper .banner-video-area img {
     min-height: 580px;
     height: 580px;
@@ -24271,6 +24315,7 @@ header.style-3.two .main-menu>ul>li.active>a i {
   -o-object-fit: cover;
   object-fit: cover;
 }
+
 .home6-activity-banner-section .video-wrapper .banner-video-area img {
   width: 100%;
   min-height: 800px;

@@ -1,119 +1,172 @@
-// // js/module/getmodules.js
+/* =====================================================
+   LOAD MENU (Main Services + Other Services)
+===================================================== */
+function loadMenu() {
+    const mainMenu = document.getElementById("mainServicesMenu");
+    const moreMenu = document.getElementById("moreSolutionsMenu");
 
-// API.get("/modules")
-//     .then(res => {
-//         console.log("FULL API RESPONSE:", res.data); // 👈 check structure
+    if (!mainMenu || !moreMenu) return;
 
-//         const modules = res.data; // API returns { success, data: [] }
+    if (window.API_DATA.modules.length === 0 || window.API_DATA.secondarymodules.length === 0) {
+        return setTimeout(loadMenu, 200);
+    }
 
-//         console.log("module data:", modules);
+    const modules = window.API_DATA.modules;
+    const secondary = window.API_DATA.secondarymodules;
 
-//         const wrapper = document.querySelector(".swiper-wrapper");
-//         wrapper.innerHTML = ""; // clear existing slides
+    // Main Services Menu
+    mainMenu.innerHTML = modules.map(m => `
+        <li>
+            <a href="service-details.html?id=${m._id}">
+                <img src="${formatImage(m.icon)}" alt="${m.title}" style="width: 16px; height: 16px; object-fit: contain; margin-right: 8px;"> 
+                ${m.title}
+            </a>
+        </li>
+    `).join("");
 
-//         modules.forEach(item => {
-//             const slide = document.createElement("a");
-//             slide.classList.add("nav-link", "category-item", "swiper-slide");
+    // Other Services Menu
+    moreMenu.innerHTML = secondary.map(s => `
+        <li>
+            <a href="service-details.html?id=${s._id}">
+                <img src="${formatImage(s.icon)}" alt="${s.title}" style="width: 16px; height: 16px; object-fit: contain; margin-right: 8px;"> 
+                ${s.title}
+            </a>
+        </li>
+        
+    `).join("");
 
-//             slide.innerHTML = `
-//                     <div class="text-center">
-//                         <img src="${IMAGE}${item.icon}" 
-//                              alt="${item.title}" 
-//                              style="width:70px; height:70px; object-fit:contain;" />
+    console.log("📌 Menu Loaded Successfully");
+}
 
-//                         <h3 class="category-title mt-2">${item.title}</h3>
-//                     </div>
-//                     `;
+setTimeout(loadMenu, 500); // Give data time to load
 
-//             slide.addEventListener("click", (e) => {
-//                 e.preventDefault();
-//                 console.log("Module ID:", item.moduleId);
-//             });
-
-//             wrapper.appendChild(slide);
-//         });
-
-//         // Initialize Swiper
-//         new Swiper(".category-carousel", {
-//             slidesPerView: 4,
-//             spaceBetween: 20,
-//             navigation: {
-//                 nextEl: ".category-carousel-next",
-//                 prevEl: ".category-carousel-prev",
-//             },
-//             breakpoints: {
-//                 0: { slidesPerView: 2 },
-//                 768: { slidesPerView: 3 },
-//                 1024: { slidesPerView: 6 }
-//             }
-//         });
-//     })
-//     .catch(err => console.error("Error loading modules:", err));
+/* =====================================================
+   DEBUG LOGS
+===================================================== */
+console.log("📡 API:", API_BASE_URL);
+console.log("📡 Image Base:", API_BASE_IMG);
 
 
+// -------------------------  in home   ------------------------------ //
+// -------------------------  in marquee   ------------------------------ //
 
-// js/module/getmodules.js
+function loadModulesMarquee() {
+    const marquee = document.getElementById("mainServicesMarquee");
+    const marqueeClone = document.getElementById("mainServicesMarqueeClone");
 
-const MODULE_PAGE_MAP = {
-    "Venues": "modules/packagevenuse.html",
-    "Transport": "modules/packagerenter.html",
-    "Programs": "modules/packageevents.html",
-    "Events": "modules/packagecakes.html",
-    "Photography": "modules/packagephotography.html",
-    "Makeup": "modules/packagemakeup.html",
-    "Catering": "modules/packagecatering.html",
-    "Ornaments": "modules/packageornaments.html",
-};
+    if (!marquee || !marqueeClone) return;
 
-API.get("/modules")
-    .then(res => {
-        const modules = res.data;
+    // Wait for modules to be loaded
+    if (API_DATA.modules.length === 0) {
+        return setTimeout(loadModulesMarquee, 200);
+    }
 
-        const wrapper = document.querySelector("#modules-wrapper");
-        wrapper.innerHTML = "";
+    const modules = API_DATA.modules;
 
-        modules.forEach(item => {
-            const slide = document.createElement("a");
-            slide.classList.add("nav-link", "category-item", "swiper-slide");
+    const html = modules.map(m => `
+        <a href="service-details.html?id=${m._id}" class="module-item">
+            <img src="${formatImage(m.icon)}" alt="${m.title}" >
+            <span>${m.title}</span>
+        </a>
+    `).join("");
 
-            slide.innerHTML = `
-                <div class="text-center">
-                    <img src="${IMAGE}${item.icon}" 
-                         alt="${item.title}" 
-                         style="width:50px; height:50px; object-fit:contain;" />
+    marquee.innerHTML = html;
+    marqueeClone.innerHTML = html; // Duplicate for smooth scrolling
 
-                    <h3 class="category-title mt-2">${item.title}</h3>
-                </div>
-            `;
+    console.log("🎉 Modules Marquee Loaded", modules);
+}
 
-            slide.addEventListener("click", (e) => {
-                e.preventDefault();
+setTimeout(loadModulesMarquee, 600);
 
-                const page = MODULE_PAGE_MAP[item.title];
 
-                if (!page) {
-                    alert("Page not found for: " + item.title);
-                    return;
-                }
+// -------------------------  in footer   ------------------------------ //
 
-                window.location.href = `${page}?moduleId=${item.moduleId}`;
-            });
+function loadFooterMainServices() {
+    const footerList = document.getElementById("footerMainServices");
+    if (!footerList) return;
 
-            wrapper.appendChild(slide);
-        });
+    // Wait until modules data is loaded
+    if (API_DATA.modules.length === 0) {
+        return setTimeout(loadFooterMainServices, 200);
+    }
 
-        new Swiper(".category-carousel", {
-            slidesPerView: 4,
-            spaceBetween: 20,
-            navigation: {
-                nextEl: ".category-carousel-next",
-                prevEl: ".category-carousel-prev",
-            },
-            breakpoints: {
-                0: { slidesPerView: 2 },
-                768: { slidesPerView: 3 },
-                1024: { slidesPerView: 6 }
-            }
-        });
-    })
-    .catch(err => console.error("Error loading modules:", err));
+    const modules = API_DATA.modules;
+
+    footerList.innerHTML = modules.map(m => `
+        <li>
+            <a href="service-details.html?id=${m._id}">
+                ${m.title}
+            </a>
+        </li>
+    `).join("");
+
+    console.log("📌 Footer Main Services Loaded");
+}
+
+setTimeout(loadFooterMainServices, 500);
+
+// -------------------------  in footer  secondary services   ------------------------------ //
+
+function loadFooterSecondaryServices() {
+    const footerList = document.getElementById("footerMoreSolutions");
+    if (!footerList) return;
+
+    // Wait until secondary modules are loaded
+    if (API_DATA.secondarymodules.length === 0) {
+        return setTimeout(loadFooterSecondaryServices, 200);
+    }
+
+    const secondary = API_DATA.secondarymodules;
+
+    footerList.innerHTML = secondary.map(s => `
+        <li>
+            <a href="service-details.html?id=${s._id}">
+                ${s.title}
+            </a>
+        </li>
+    `).join("");
+
+    console.log("📌 Footer Secondary Services Loaded");
+}
+
+setTimeout(loadFooterSecondaryServices, 500);
+
+// -------------------------------------------------------------- //----------------
+// -------------------------  in filtering home page   ------------------------------ //
+
+function loadFilterModules() {
+    const filterList = document.getElementById("filterList");
+    if (!filterList) return;
+
+    // Wait for modules to load
+    if (API_DATA.modules.length === 0) {
+        return setTimeout(loadFilterModules, 200);
+    }
+
+    // Map API title → Display title
+    const filterMap = {
+        "Venues": "Venues",
+        "Photography": "Photography",
+        "Makeup": "Makeup Artists",
+        "Catering": "Food & Catering"
+    };
+
+    // Create dynamic filter list
+    const html = API_DATA.modules
+        .filter(m => filterMap[m.title]) // only keep the 4 needed modules
+        .map(m => `
+            <li class="single-item">
+                <img src="${formatImage(m.icon)}" width="24" height="24" alt="${filterMap[m.title]}">
+                <span>${filterMap[m.title]}</span>
+            </li>
+        `)
+        .join("");
+
+    filterList.innerHTML = html;
+
+    console.log("📌 Filter Modules Loaded:", API_DATA.modules);
+}
+
+setTimeout(loadFilterModules, 500);
+
+
