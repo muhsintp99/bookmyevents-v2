@@ -17,7 +17,7 @@ function loadMenu() {
     // Main Services Menu
     mainMenu.innerHTML = modules.map(m => `
         <li>
-            <a href="service-details.html?id=${m._id}">
+            <a href="package-details.html?id=${m._id}">
                 <img src="${formatImage(m.icon)}" alt="${m.title}" style="width: 16px; height: 16px; object-fit: contain; margin-right: 8px;"> 
                 ${m.title}
             </a>
@@ -27,7 +27,7 @@ function loadMenu() {
     // Other Services Menu
     moreMenu.innerHTML = secondary.map(s => `
         <li>
-            <a href="service-details.html?id=${s._id}">
+            <a href="package-details.html?id=${s._id}">
                 <img src="${formatImage(s.icon)}" alt="${s.title}" style="width: 16px; height: 16px; object-fit: contain; margin-right: 8px;"> 
                 ${s.title}
             </a>
@@ -64,7 +64,7 @@ function loadModulesMarquee() {
     const modules = API_DATA.modules;
 
     const html = modules.map(m => `
-        <a href="service-details.html?id=${m._id}" class="module-item">
+        <a href="package-details.html?id=${m._id}" class="module-item">
             <img src="${formatImage(m.icon)}" alt="${m.title}" >
             <span>${m.title}</span>
         </a>
@@ -94,7 +94,7 @@ function loadFooterMainServices() {
 
     footerList.innerHTML = modules.map(m => `
         <li>
-            <a href="service-details.html?id=${m._id}">
+            <a href="package-details.html?id=${m._id}">
                 ${m.title}
             </a>
         </li>
@@ -120,7 +120,7 @@ function loadFooterSecondaryServices() {
 
     footerList.innerHTML = secondary.map(s => `
         <li>
-            <a href="service-details.html?id=${s._id}">
+            <a href="package-details.html?id=${s._id}">
                 ${s.title}
             </a>
         </li>

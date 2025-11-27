@@ -133,11 +133,12 @@ window.API_DATA = {
     modules: [],
     secondarymodules: [],
     venues: [],
-    packages: [],
     categories: [],
     banners: [],
     vehicles: [],
     catering: [],
+    makeupPackages: [],
+    photographyPackages: [],
 };
 
 /* =====================================================
@@ -150,8 +151,7 @@ const API_BASE_IMG = "https://api.bookmyevent.ae";
    FORMAT IMAGE (Always Returns Correct Image URL)
 ===================================================== */
 function formatImage(path) {
-
-    if (!path) return "assets/img/default.png"; // fallback icon/image
+    if (!path) return "assets/img/fav-icon.png";
 
     if (path.startsWith("http")) return path;
 
@@ -170,7 +170,6 @@ function formatImage(path) {
 async function fetchJSON(endpoint) {
     const res = await fetch(`${API_BASE_URL}${endpoint}`);
     if (!res.ok) throw new Error(`API Error: ${endpoint}`);
-
     return res.json();
 }
 
@@ -184,43 +183,51 @@ async function loadAllData() {
             modulesJson,
             secondaryJson,
             venuesJson,
-            packagesJson,
             categoriesJson,
             bannersJson,
             vehiclesJson,
             cateringJson,
+            makeupJson,
+            photographyJson,
         ] = await Promise.all([
             fetchJSON("/zones"),
             fetchJSON("/modules"),
             fetchJSON("/secondary-modules"),
             fetchJSON("/venues"),
-            fetchJSON("/packages"),
             fetchJSON("/categories"),
             fetchJSON("/banners"),
             fetchJSON("/vehicles"),
             fetchJSON("/catering"),
+            fetchJSON("/makeup-packages"),
+            fetchJSON("/photography-packages"),
         ]);
 
-        // Store clean data (your API's structure)
+        /* ===============================
+           STORE CLEAN DATA SAFELY
+        =============================== */
         window.API_DATA.zone = zoneJson.data || zoneJson || [];
-        window.API_DATA.modules = modulesJson || [];
-        window.API_DATA.secondarymodules = secondaryJson || [];
+        window.API_DATA.modules = modulesJson.data || modulesJson || [];
+        window.API_DATA.secondarymodules = secondaryJson.data || secondaryJson || [];
 
         window.API_DATA.venues = venuesJson.data || [];
-        window.API_DATA.packages = packagesJson.data || [];
-        window.API_DATA.categories = categoriesJson.data || [];
 
+        window.API_DATA.categories = categoriesJson.data || [];
         window.API_DATA.banners = bannersJson?.data?.banners || [];
 
         window.API_DATA.vehicles = vehiclesJson.data || [];
         window.API_DATA.catering = cateringJson.data || [];
 
-        console.log("✅ API Loaded Successfully", window.API_DATA);
+        window.API_DATA.makeupPackages = makeupJson.data || [];
+        window.API_DATA.photographyPackages = photographyJson.data || [];
+
+        console.log("✅ API Loaded Successfully:", window.API_DATA);
 
     } catch (error) {
         console.error("❌ Error loading API:", error);
     }
 }
 
+/* =====================================================
+   AUTO LOAD WHEN FILE IS INCLUDED
+===================================================== */
 loadAllData();
-

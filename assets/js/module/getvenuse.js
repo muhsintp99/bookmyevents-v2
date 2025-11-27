@@ -1,539 +1,142 @@
-/* =========================================================
-    GLOBAL VARIABLES
-========================================================= */
-let allVenues = [];
-let currentPage = 1;
-const pageSize = 12;
-
-/* =========================================================
-    FETCH ALL VENUES
-========================================================= */
-API.get("/venues")
-    .then(res => {
-        allVenues = res.data.data;
-
-        // Load Top Rated Section (Homepage)
-        if (document.getElementById("top-rated-wrapper")) {
-            loadTopRatedVenues(allVenues);
+/* =====================================================
+   ✅ INJECT IMAGE HEIGHT & CENTER STYLE USING JS
+===================================================== */
+(function injectVenueImageStyle() {
+    const style = document.createElement("style");
+    style.innerHTML = `
+        .package-img-wrap {
+            position: relative;
+            width: 100%;
+            height: 260px;              
+            overflow: hidden;
+            border-radius: 12px;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        // Load Paginated Venue List
-        if (document.getElementById("venue-list")) {
-            loadPage(currentPage);
-            renderPaginationNumbers();
+        .package-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;         
+            object-position: center;  
+            display: block;
+            transition: transform 0.4s ease;
         }
-    })
-    .catch(err => console.error("Error loading venues:", err));
 
+        .package-card:hover .package-img-wrap img {
+            transform: scale(1.08);
+        }
+    `;
+    document.head.appendChild(style);
+})();
 
-/* =========================================================
-    RENDER TOP RATED VENUES (SLIDER)
-========================================================= */
-function loadTopRatedVenues(list) {
-    const wrapper = document.getElementById("top-rated-wrapper");
-    if (!wrapper) return;
-
-    wrapper.innerHTML = "";
-    const wishlist = getWishlist();
-
-    list.slice(0, 10).forEach(v => {
-        const imageUrl = v.thumbnail
-            ? IMAGE + v.thumbnail.replace("/var/www/backend/", "")
-            : "../logo/book.png";
-
-        const isLiked = wishlist.includes(v._id);
-
-        const slide = `
-        <div class="swiper-slide">
-            <div class="product-item position-relative">
-
-                <!-- ❤️ Wishlist -->
-                <a class="btn-wishlist ${isLiked ? "heart-active" : ""}" 
-                    data-id="${v._id}"
-                    style="position:absolute; top:10px; right:10px; z-index:10;">
-                    <svg width="24" height="24">
-                        <use xlink:href="#heart"></use>
-                    </svg>
-                </a>
-
-                <figure>
-                    <a href="./demmy.html?id=${v._id}">
-                        <img src="${imageUrl}" class="rounded"
-                        style="width:100%; height:180px; object-fit:cover;">
-                    </a>
-                </figure>
-
-                <h3 class="text-capitalize mt-2">${v.venueName}</h3>
-                <span>${v.shortDescription}</span>
-                <span class="rating d-block my-1">
-                    <svg width="20" height="20" class="text-primary">
-                        <use xlink:href="#star-solid"></use>
-                    </svg>
-                    ${v.rating > 0 ? v.rating : "No rating"}
-                </span>
-                <span class="price fs-6">${v.venueAddress}</span>
-            </div>
-        </div>
-        `;
-
-        wrapper.insertAdjacentHTML("beforeend", slide);
-    });
-
-    // Bind wishlist
-    setTimeout(bindWishlistClicks, 300);
-
-    // Swiper Init
-    setTimeout(() => {
-        new Swiper(".products-carousel", {
-            slidesPerView: 5,
-            spaceBetween: 30,
-            speed: 500,
-            navigation: {
-                nextEl: ".products-carousel-next",
-                prevEl: ".products-carousel-prev",
-            },
-            breakpoints: {
-                0: { slidesPerView: 1 },
-                768: { slidesPerView: 3 },
-                991: { slidesPerView: 4 },
-                1500: { slidesPerView: 5 }
-            }
-        });
-    }, 200);
+/* =====================================================
+   WAIT UNTIL API LOADED
+===================================================== */
+function waitForVenueAPI() {
+    if (!window.API_DATA || !API_DATA.venues || !API_DATA.venues.length) {
+        return setTimeout(waitForVenueAPI, 300);
+    }
+    renderPopularVenues();
 }
 
-
-
-/* =========================================================
-    PAGINATION VENUES LISTING
-========================================================= */
-function loadPage(page) {
-    const wrapper = document.getElementById("venue-list");
-    if (!wrapper) return;
-
-    wrapper.innerHTML = "";
-
-    const start = (page - 1) * pageSize;
-    const venues = allVenues.slice(start, start + pageSize);
-
-    venues.forEach(v => {
-        const imageUrl = v.thumbnail
-            ? IMAGE + v.thumbnail.replace("/var/www/backend/", "")
-            : "../logo/book.png";
-
-        const rating = v.rating > 0 ? v.rating : "No rating";
-
-        wrapper.innerHTML += `
-        <div class="product-item col-md-6 col-lg-3">
-
-            <!-- ❤️ Wishlist -->
-            <a class="btn-wishlist" data-id="${v._id}">
-                <svg width="24" height="24">
-                    <use xlink:href="#heart"></use>
-                </svg>
-            </a>
-
-            <!-- Image -->
-            <figure>
-                <a href="./demmy.html?id=${v._id}">
-                    <img src="${imageUrl}" class="rounded"
-                    style="width:100%; height:180px; object-fit:cover;">
-                </a>
-            </figure>
-
-            <!-- Title -->
-            <h3 class="text-capitalize">${v.venueName}</h3>
-
-            <!-- Short Description -->
-            <span class="qty">${v.shortDescription}</span>
-
-            <!-- Rating -->
-            <span class="rating">
-                <svg width="20" height="20" class="text-primary">
-                    <use xlink:href="#star-solid"></use>
-                </svg> 
-                ${rating}
-            </span>
-
-            <!-- Address -->
-            <span class="price fs-6 fw-normal">${v.venueAddress}</span>
-
-            <!-- View Details -->
-            <div class="mt-2">
-                <a href="./demmy.html?id=${v._id}" class="nav-link">View Details</a>
-            </div>
-
-        </div>
-        `;
-    });
-
-    bindWishlistClicks();
-    highlightActivePage();
-    updatePrevNextButtons();
+/* =====================================================
+   HELPER: TRUNCATE TEXT
+===================================================== */
+function truncateText(text, maxLength = 20) {
+    if (!text) return "Event Location";
+    return text.length > maxLength 
+        ? text.substring(0, maxLength) + "..." 
+        : text;
 }
 
-
-
-/* =========================================================
-    PAGINATION BUTTONS
-========================================================= */
-function renderPaginationNumbers() {
-    const totalPages = Math.ceil(allVenues.length / pageSize);
-    const container = document.getElementById("paginationNumbers");
-    if (!container) return;
-
+/* =====================================================
+   RENDER 6 POPULAR TOP PICK VENUES — THUMBNAIL ONLY
+===================================================== */
+function renderPopularVenues() {
+    const container = document.getElementById("popularVenuesContainer");
     container.innerHTML = "";
 
-    for (let i = 1; i <= totalPages; i++) {
-        const btn = document.createElement("button");
-        btn.classList.add("btn", "btn-light");
-        btn.innerText = i;
+    const venues = API_DATA.venues
+        .filter(v => v.isTopPick === true)
+        .slice(0, 6);
 
-        btn.addEventListener("click", () => {
-            currentPage = i;
-            loadPage(currentPage);
-        });
-
-        container.appendChild(btn);
-    }
-}
-
-function highlightActivePage() {
-    const buttons = document.querySelectorAll("#paginationNumbers button");
-
-    buttons.forEach((btn, index) => {
-        btn.classList.remove("btn-primary");
-        btn.classList.add("btn-light");
-
-        if (index + 1 === currentPage) {
-            btn.classList.remove("btn-light");
-            btn.classList.add("btn-primary");
-        }
-    });
-}
-
-function updatePrevNextButtons() {
-    const totalPages = Math.ceil(allVenues.length / pageSize);
-
-    if (document.getElementById("prevBtn"))
-        document.getElementById("prevBtn").disabled = currentPage === 1;
-
-    if (document.getElementById("nextBtn"))
-        document.getElementById("nextBtn").disabled = currentPage === totalPages;
-}
-
-if (document.getElementById("prevBtn")) {
-    document.getElementById("prevBtn").addEventListener("click", () => {
-        if (currentPage > 1) {
-            currentPage--;
-            loadPage(currentPage);
-        }
-    });
-}
-
-if (document.getElementById("nextBtn")) {
-    document.getElementById("nextBtn").addEventListener("click", () => {
-        const totalPages = Math.ceil(allVenues.length / pageSize);
-
-        if (currentPage < totalPages) {
-            currentPage++;
-            loadPage(currentPage);
-        }
-    });
-}
-
-
-
-/* =========================================================
-    WISHLIST FUNCTIONS
-========================================================= */
-function getWishlist() {
-    return JSON.parse(localStorage.getItem("wishlist")) || [];
-}
-
-function saveWishlist(list) {
-    localStorage.setItem("wishlist", JSON.stringify(list));
-}
-
-function toggleWishlist(id) {
-    let list = getWishlist();
-
-    if (list.includes(id)) {
-        list = list.filter(item => item !== id);
-    } else {
-        list.push(id);
+    if (!venues.length) {
+        container.innerHTML = `
+            <div class="col-12 text-center">
+                <p>No Top Pick Venues Available</p>
+            </div>
+        `;
+        return;
     }
 
-    saveWishlist(list);
-}
+    venues.forEach((v, index) => {
 
-function bindWishlistClicks() {
-    document.querySelectorAll(".btn-wishlist").forEach(btn => {
-        btn.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+        const thumbnailImage = formatImage(v.thumbnail);
 
-            const venueId = btn.getAttribute("data-id");
+        const venueHTML = `
+        <div class="col-lg-4 col-md-6 wow animate fadeInDown"
+            data-wow-delay="${200 + index * 100}ms"
+            data-wow-duration="1500ms">
 
-            toggleWishlist(venueId);
+            <div class="package-card">
 
-            btn.classList.toggle("heart-active");
-        });
+                <!-- ✅ THUMBNAIL ONLY -->
+                <div class="package-img-wrap">
+                    <a href="package-details.html?id=${v._id}" class="package-img">
+                        <img 
+                            src="${thumbnailImage}" 
+                            onerror="this.onerror=null;this.src='assets/img/fav-icon.png';"
+                            alt="venue"
+                        >
+                    </a>
+
+                    <div class="batch">
+                        <span>Popular</span>
+                    </div>
+                </div>
+
+                <div class="package-content">
+
+                    <h5>
+                        <a href="package-details.html?id=${v._id}">
+                            ${v.venueName}
+                        </a>
+                    </h5>
+
+                    <div class="location-and-time">
+                        <div class="location">
+                            <svg width="14" height="14" viewBox="0 0 14 14"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M6.83615 0C3.77766 0 1.28891 2.48879 1.28891 5.54892C1.28891 7.93837 4.6241 11.8351 6.05811 13.3994C6.25669 13.6175 6.54154 13.7411 6.83615 13.7411C7.13076 13.7411 7.41561 13.6175 7.6142 13.3994C9.04821 11.8351 12.3834 7.93833 12.3834 5.54892C12.3834 2.48879 9.89464 0 6.83615 0Z" />
+                            </svg>
+
+                            <a href="package-details.html?id=${v._id}">
+                                ${truncateText(v.venueAddress, 30)}
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="btn-and-price-area d-flex justify-content-end align-items-center">
+                        <a href="package-details.html?id=${v._id}" class="primary-btn1">
+                            <span>Book Now</span>
+                            <span>Book Now</span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        `;
+
+        container.innerHTML += venueHTML;
     });
 }
 
-
-// // --------------------------------------------------------------------------------------
-
-// /* =========================================================
-//     GLOBAL VARIABLES
-// ========================================================= */
-// let allVenues = [];
-// let currentPage = 1;
-// const pageSize = 12;
-
-
-// /* =========================================================
-//     FETCH VENUES (MAIN ENTRY POINT)
-// ========================================================= */
-// API.get("/venues")
-//     .then(res => {
-//         allVenues = res.data.data;
-
-//         // If homepage Top Rated Section exists
-//         if (document.getElementById("top-rated-wrapper")) {
-//             loadTopRatedVenues(allVenues);
-//         }
-
-//         // If venue listing (pagination page) exists
-//         if (document.getElementById("venue-list")) {
-//             loadPage(currentPage);
-//             renderPaginationNumbers();
-//         }
-//     })
-//     .catch(err => console.error("Error loading venues:", err));
-
-
-
-// /* =========================================================
-//     PAGE 1 — HOME: TOP RATED VENUES SLIDER
-// ========================================================= */
-// function loadTopRatedVenues(list) {
-//     const wrapper = document.getElementById("top-rated-wrapper");
-//     if (!wrapper) return;
-
-//     wrapper.innerHTML = "";
-
-//     const wishlist = getWishlist();
-
-//     list.slice(0, 10).forEach(v => {
-//         const imageUrl =
-//             v.thumbnail
-//                 ? IMAGE + v.thumbnail.replace("/var/www/backend/", "")
-//                 : "../logo/book.png";
-
-//         const isLiked = wishlist.includes(v._id);
-
-//         const slide = `
-//         <div class="swiper-slide">
-//             <div class="product-item position-relative">
-
-//                 <!-- ❤️ WISHLIST BUTTON -->
-//                 <a class="btn-wishlist ${isLiked ? "heart-active" : ""}" 
-//                     data-id="${v._id}"
-//                     style="position:absolute; top:10px; right:10px; z-index:10;">
-//                     <svg width="24" height="24">
-//                         <use xlink:href="#heart"></use>
-//                     </svg>
-//                 </a>
-
-//                 <figure>
-//                     <a href="./modules/venue-details.html?id=${v._id}">
-//                         <img src="${imageUrl}" class="rounded"
-//                         style="width:100%; height:180px; object-fit:cover;">
-//                     </a>
-//                 </figure>
-
-//                 <h3 class="text-capitalize mt-2">${v.venueName}</h3>
-//                 <span>${v.shortDescription}</span>
-//                 <span class="rating d-block my-1">
-//                     <svg width="20" height="20" class="text-primary">
-//                         <use xlink:href="#star-solid"></use>
-//                     </svg>
-//                     ${v.rating > 0 ? v.rating : "4.2"}
-//                 </span>
-//                 <span class="price fs-6 ">${v.venueAddress}</span>
-//             </div>
-//         </div>
-//         `;
-//         wrapper.insertAdjacentHTML("beforeend", slide);
-//     });
-
-//     // Rebind heart after DOM is updated
-//     setTimeout(bindWishlistClicks, 300);
-
-//     // Reinitialize Swiper
-//     setTimeout(() => {
-//         new Swiper(".products-carousel", {
-//             slidesPerView: 5,
-//             spaceBetween: 30,
-//             speed: 500,
-//             navigation: {
-//                 nextEl: ".products-carousel-next",
-//                 prevEl: ".products-carousel-prev",
-//             },
-//             breakpoints: {
-//                 0: { slidesPerView: 1 },
-//                 768: { slidesPerView: 3 },
-//                 991: { slidesPerView: 4 },
-//                 1500: { slidesPerView: 5 },
-//             }
-//         });
-//     }, 200);
-// }
-
-
-
-
-// /* =========================================================
-//     PAGE 2 — VENUE LISTING WITH PAGINATION
-// ========================================================= */
-// function loadPage(page) {
-//     const wrapper = document.getElementById("venue-list");
-//     if (!wrapper) return;
-
-//     wrapper.innerHTML = "";
-
-//     const start = (page - 1) * pageSize;
-//     const venues = allVenues.slice(start, start + pageSize);
-
-//     venues.forEach(v => {
-//         const imageUrl =
-//             v.thumbnail
-//                 ? IMAGE + v.thumbnail.replace("/var/www/backend/", "")
-//                 : "../logo/book.png";
-
-//         const rating = v.rating > 0 ? v.rating : "No rating";
-
-//         wrapper.innerHTML += `
-//         <div class="product-item col-md-6 col-lg-3">
-
-//             <a class="btn-wishlist" data-id="${v._id}">
-//                 <svg width="24" height="24">
-//                     <use xlink:href="#heart"></use>
-//                 </svg>
-//             </a>
-
-//             <figure>
-//                 <a href="venue-details.html?id=${v._id}">
-//                     <img src="${imageUrl}" class="rounded"
-//                     style="width:100%; height:180px; object-fit:cover;">
-//                 </a>
-//             </figure>
-
-//             <h3 class="text-capitalize">${v.venueName}</h3>
-//             <span>${v.shortDescription}</span>
-
-//             <span class="rating">
-//                 <svg width="20" height="20" class="text-primary">
-//                     <use xlink:href="#star-solid"></use>
-//                 </svg>
-//                 ${rating}
-//             </span>
-
-//             <span class="price">${v.venueAddress}</span>
-
-//             <a href="venue-details.html?id=${v._id}" class="nav-link mt-2">
-//                 View Details
-//             </a>
-//         </div>
-//         `;
-//     });
-
-//     bindWishlistClicks();
-//     highlightActivePage();
-//     updatePrevNextButtons();
-// }
-
-
-
-// /* =========================================================
-//     WISHLIST FUNCTIONS
-// ========================================================= */
-// function getWishlist() {
-//     return JSON.parse(localStorage.getItem("wishlist")) || [];
-// }
-
-// function saveWishlist(list) {
-//     localStorage.setItem("wishlist", JSON.stringify(list));
-// }
-
-// function toggleWishlist(id) {
-//     let list = getWishlist();
-
-//     if (list.includes(id)) {
-//         list = list.filter(item => item !== id);
-//     } else {
-//         list.push(id);
-//     }
-
-//     saveWishlist(list);
-// }
-
-// function bindWishlistClicks() {
-//     document.querySelectorAll(".btn-wishlist").forEach(btn => {
-//         btn.addEventListener("click", e => {
-//             e.preventDefault();
-//             e.stopPropagation();
-
-//             toggleWishlist(btn.dataset.id);
-//             btn.classList.toggle("heart-active");
-//         });
-//     });
-// }
-
-
-// /* =========================================================
-//     PAGINATION FUNCTIONS
-// ========================================================= */
-// function renderPaginationNumbers() {
-//     const totalPages = Math.ceil(allVenues.length / pageSize);
-//     const container = document.getElementById("paginationNumbers");
-//     if (!container) return;
-
-//     container.innerHTML = "";
-
-//     for (let i = 1; i <= totalPages; i++) {
-//         container.innerHTML += `
-//             <button class="btn btn-light" onclick="goToPage(${i})">${i}</button>
-//         `;
-//     }
-// }
-
-// function goToPage(num) {
-//     currentPage = num;
-//     loadPage(currentPage);
-// }
-
-// function highlightActivePage() {
-//     const buttons = document.querySelectorAll("#paginationNumbers button");
-    
-//     buttons.forEach((btn, index) => {
-//         btn.classList.remove("btn-primary");
-//         btn.classList.add("btn-light");
-
-//         if (index + 1 === currentPage) {
-//             btn.classList.add("btn-primary");
-//         }
-//     });
-// }
-
-// function updatePrevNextButtons() {
-//     const totalPages = Math.ceil(allVenues.length / pageSize);
-
-//     if (document.getElementById("prevBtn"))
-//         document.getElementById("prevBtn").disabled = currentPage === 1;
-
-//     if (document.getElementById("nextBtn"))
-//         document.getElementById("nextBtn").disabled = currentPage === totalPages;
-// }
+/* =====================================================
+   START AFTER API LOAD
+===================================================== */
+waitForVenueAPI();
