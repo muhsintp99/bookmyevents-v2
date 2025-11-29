@@ -81,6 +81,37 @@ setTimeout(loadModulesMarquee, 600);
 
 // -------------------------  in footer   ------------------------------ //
 
+function loadSecondaryModulesMarquee() {
+    const smarquee = document.getElementById("secondaryServicesMarquee");
+    const smarqueeClone = document.getElementById("secondaryServicesMarqueeClone");
+
+    if (!smarquee || !smarqueeClone) return;
+
+    // Wait for modules to be loaded
+    if (API_DATA.secondarymodules.length === 0) {
+        return setTimeout(loadSecondaryModulesMarquee, 200);
+    }
+
+    const modules = API_DATA.secondarymodules;
+
+    const html = modules.map(s => `
+        <a href="packages.html?id=${s._id}" class="module-item">
+            <img src="${formatImage(s.icon)}" alt="${s.title}" >
+            <span>${s.title}</span>
+        </a>
+    `).join("");
+
+    smarquee.innerHTML = html;
+    smarqueeClone.innerHTML = html;
+
+    console.log("🎉 Secondary Modules Marquee Loaded", modules);
+}
+
+setTimeout(loadSecondaryModulesMarquee, 600);
+
+
+// -------------------------  in footer   ------------------------------ //
+
 function loadFooterMainServices() {
     const footerList = document.getElementById("footerMainServices");
     if (!footerList) return;
