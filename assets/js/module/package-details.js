@@ -130,7 +130,7 @@ function renderFAQs(faqs) {
 
     faqWrapper.innerHTML = "";
 
-    if (!faqs.length) {
+    if (!faqs || !faqs.length) {
         faqWrapper.innerHTML = `
             <div class="accordion-item">
                 <h5 class="accordion-header">
@@ -155,16 +155,18 @@ function renderFAQs(faqs) {
             <div class="accordion-item">
                 <h5 class="accordion-header" id="${headingId}">
                     <button class="accordion-button ${index !== 0 ? "collapsed" : ""}" 
-                            type="button" 
-                            data-bs-toggle="collapse"
-                            data-bs-target="#${collapseId}">
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#${collapseId}"
+                        aria-expanded="${index === 0 ? "true" : "false"}"
+                        aria-controls="${collapseId}">
                         ${faq.question}
                     </button>
                 </h5>
 
                 <div id="${collapseId}" 
-                     class="accordion-collapse collapse ${index === 0 ? "show" : ""}"
-                     data-bs-parent="#accordionFlushExample">
+                    class="accordion-collapse collapse ${index === 0 ? "show" : ""}"
+                    data-bs-parent="#accordionFlushExample">
 
                     <div class="accordion-body">
                         ${faq.answer}
@@ -174,6 +176,7 @@ function renderFAQs(faqs) {
         `;
     });
 }
+
 
 /* ============================================================
    ✅ 5. BREADCRUMB IMAGE SLIDER
