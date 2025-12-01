@@ -119,7 +119,7 @@ function renderVenueDetails(v) {
     renderDynamicHighlights(v);
 
     renderBreadcrumbBottom(v);
-}
+} 
 
 /* ============================================================
    ✅ 4. FAQ RENDER FUNCTION
