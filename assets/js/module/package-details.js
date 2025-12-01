@@ -20,7 +20,9 @@ async function loadVenueDetails() {
         const res = await fetch(`${API_BASE_URL}/venues/${id}`);
         const json = await res.json();
 
-        if (!json.success) throw new Error("Invalid API response");
+        if (!json || !json.success || !json.data) {
+            throw new Error("Invalid API response");
+        }
 
         renderVenueDetails(json.data);
 
@@ -34,70 +36,93 @@ async function loadVenueDetails() {
 ============================================================ */
 function renderVenueDetails(v) {
 
-    /* ===============================
-       ✅ TITLE & CATEGORY (BREADCRUMB)
-    =============================== */
+    /* ✅ TITLE & CATEGORY */
     const titleEl = document.querySelector(".banner-content h1");
-    if (titleEl) titleEl.textContent = v.venueName || "Venue Name";
+    if (titleEl) titleEl.textContent = v?.venueName || "Venue Name";
 
+    // const catEl = document.querySelector(".banner-content .batch span");
+    // if (catEl && v?.categories?.length) {
+    //     catEl.textContent = v.categories.map(c => c.title).join(", ");
+    // }
     const catEl = document.querySelector(".banner-content .batch span");
-    if (catEl && v.categories?.length) {
-        catEl.textContent = v.categories.map(c => c.title).join(", ");
+    if (catEl && v?.categories?.length) {
+        const moduleTitles = v.categories
+            .map(c => c?.module?.title)
+            .filter(Boolean); // remove undefined
+
+        catEl.textContent = moduleTitles.length
+            ? moduleTitles.join(", ")
+            : v.categories.map(c => c.title).join(", "); // fallback
     }
 
-    /* ===============================
-       ✅ SHORT DESCRIPTION
-    =============================== */
-    setText("#shortDescription", v.shortDescription);
 
-    /* ===============================
-       ✅ CONTACT INFO
-    =============================== */
-    setText("#contactPhone", v.contactPhone);
-    setText("#contactEmail", v.contactEmail);
-    setHref("#contactWebsite", v.contactWebsite);
+    /* ✅ SHORT DESCRIPTION */
+    setText("#shortDescription", v?.shortDescription);
 
-    /* ===============================
-       ✅ OWNER INFO
-    =============================== */
-    setText("#ownerName", v.ownerManagerName);
-    setText("#ownerPhone", v.ownerManagerPhone);
+    /* ✅ CONTACT INFO */
+    setText("#contactPhone", v?.contactPhone);
+    setText("#contactEmail", v?.contactEmail);
+    setHref("#contactWebsite", v?.contactWebsite);
 
-    /* ===============================
-       ✅ FACILITIES (YES / NO)
-    =============================== */
-    setYesNo("#parkingAvailability", v.parkingAvailability);
-    setYesNo("#wheelchairAccessibility", v.wheelchairAccessibility);
-    setYesNo("#wifiAvailability", v.wifiAvailability);
-    setYesNo("#foodCateringAvailability", v.foodCateringAvailability);
-    setYesNo("#acAvailable", v.acAvailable);
+    /* ✅ OWNER INFO */
+    setText("#ownerName", v?.ownerManagerName);
+    setText("#ownerPhone", v?.ownerManagerPhone);
 
-    /* ===============================
-       ✅ GUEST CAPACITY
-    =============================== */
-    setText("#maxGuestsSeated", v.maxGuestsSeated);
-    setText("#maxGuestsStanding", v.maxGuestsStanding);
+    /* ✅ FACILITIES */
+    setYesNo("#parkingAvailability", v?.parkingAvailability);
+    setYesNo("#wheelchairAccessibility", v?.wheelchairAccessibility);
+    setYesNo("#wifiAvailability", v?.wifiAvailability);
+    setYesNo("#foodCateringAvailability", v?.foodCateringAvailability);
+    setYesNo("#acAvailable", v?.acAvailable);
 
-    /* ===============================
-       ✅ PRICING (MONDAY MORNING SAMPLE)
-    =============================== */
-    if (v.pricingSchedule?.monday?.morning) {
+    setText("#language", v?.language);
+
+    /* ✅ CAPACITY */
+    setText("#maxGuestsSeated", v?.maxGuestsSeated);
+    setText("#maxGuestsStanding", v?.maxGuestsStanding);
+    setText("#parkingCapacity", v?.parkingCapacity);
+
+    /* ✅ OPEN / CLOSE TIME */
+    setText("#openingHours", v?.openingHours);
+    setText("#closingHours", v?.closingHours);
+
+    /* ✅ CATEGORY LABEL */
+    if (v?.categories?.length) {
+        setText("#venueCategory", v.categories.map(c => c.title).join(", "));
+    }
+
+    setText("#venueModuleTitle", v?.categories?.[0]?.module?.title);
+
+
+    /* ✅ PRICING */
+    if (v?.pricingSchedule?.monday?.morning?.perDay) {
         setText("#morningPrice", v.pricingSchedule.monday.morning.perDay + " AED");
     }
 
-    /* ===============================
-       ✅ FAQ RENDER (YOUR EXACT ACCORDION)
-    =============================== */
-    renderFAQs(v.faqs);
+    /* ✅ FAQ */
+    renderFAQs(v?.faqs || []);
 
-    /* ===============================
-       ✅ BREADCRUMB IMAGE SLIDER
-    =============================== */
-    renderBreadcrumbSlider(v.images || []);
+    /* ✅ BREADCRUMB SLIDER */
+    // renderBreadcrumbSlider(v?.images || []);
+    renderBreadcrumbSlider([], v?.thumbnail);
+
+
+    /* ✅ EXPLORE IMAGE SLIDER */
+    renderExploreImages(v?.images || []);
+
+    /* ✅ GOOGLE MAP */
+    if (v?.latitude && v?.longitude) {
+        initGoogleMap(Number(v.latitude), Number(v.longitude));
+    }
+
+    /* ✅ ✅ DYNAMIC HIGHLIGHTS (FIXED CALL LOCATION) */
+    renderDynamicHighlights(v);
+
+    renderBreadcrumbBottom(v);
 }
 
 /* ============================================================
-   ✅ 4. FAQ RENDER FUNCTION (EXACT MATCH TO YOUR HTML)
+   ✅ 4. FAQ RENDER FUNCTION
 ============================================================ */
 function renderFAQs(faqs) {
     const faqWrapper = document.getElementById("accordionFlushExample");
@@ -105,7 +130,7 @@ function renderFAQs(faqs) {
 
     faqWrapper.innerHTML = "";
 
-    if (!faqs || !faqs.length) {
+    if (!faqs.length) {
         faqWrapper.innerHTML = `
             <div class="accordion-item">
                 <h5 class="accordion-header">
@@ -132,16 +157,13 @@ function renderFAQs(faqs) {
                     <button class="accordion-button ${index !== 0 ? "collapsed" : ""}" 
                             type="button" 
                             data-bs-toggle="collapse"
-                            data-bs-target="#${collapseId}" 
-                            aria-expanded="${index === 0 ? "true" : "false"}"
-                            aria-controls="${collapseId}">
+                            data-bs-target="#${collapseId}">
                         ${faq.question}
                     </button>
                 </h5>
 
                 <div id="${collapseId}" 
                      class="accordion-collapse collapse ${index === 0 ? "show" : ""}"
-                     aria-labelledby="${headingId}" 
                      data-bs-parent="#accordionFlushExample">
 
                     <div class="accordion-body">
@@ -156,40 +178,69 @@ function renderFAQs(faqs) {
 /* ============================================================
    ✅ 5. BREADCRUMB IMAGE SLIDER
 ============================================================ */
-function renderBreadcrumbSlider(images) {
-    const slider = document.querySelector(".home2-banner-slider .swiper-wrapper");
+// function renderBreadcrumbSlider(images) {
+//     const slider = document.querySelector(".home2-banner-slider .swiper-wrapper");
+//     if (!slider) return;
+
+//     slider.innerHTML = "";
+
+//     if (images.length) {
+//         images.forEach(img => {
+//             slider.innerHTML += `
+//                 <div class="swiper-slide">
+//                     <div class="banner-bg"
+//                         style="background-image:linear-gradient(rgba(0,0,0,.3), rgba(0,0,0,.3)), 
+//                         url('${formatImage(img)}');">
+//                     </div>
+//                 </div>
+//             `;
+//         });
+//     } else {
+//         slider.innerHTML = `
+//             <div class="swiper-slide">
+//                 <div class="banner-bg"
+//                     style="background-image:url('assets/img/fav-icon.png');">
+//                 </div>
+//             </div>
+//         `;
+//     }
+
+//     setTimeout(initBreadcrumbSwiper, 300);
+// }
+
+/* ============================================================
+   ✅ 5. BREADCRUMB IMAGE (THUMBNAIL ONLY)
+============================================================ */
+function renderBreadcrumbSlider(images, thumbnail) {
+    const slider = document.getElementById("breadcrumbWrapper");
     if (!slider) return;
 
     slider.innerHTML = "";
 
-    if (images.length) {
-        images.forEach(img => {
-            slider.innerHTML += `
-                <div class="swiper-slide">
-                    <div class="banner-bg"
-                        style="background-image:linear-gradient(rgba(0,0,0,.3), rgba(0,0,0,.3)), url('${formatImage(img)}');">
-                    </div>
-                </div>
-            `;
-        });
-    } else {
-        slider.innerHTML = `
-            <div class="swiper-slide">
-                <div class="banner-bg"
-                    style="background-image:linear-gradient(rgba(0,0,0,.3), rgba(0,0,0,.3)), url('assets/img/fav-icon.png');">
-                </div>
-            </div>
-        `;
-    }
+    const bgImage = thumbnail
+        ? formatImage(thumbnail)
+        : "assets/img/fav-icon.png";
 
-    // ✅ Re-init swiper after DOM update
-    setTimeout(initBreadcrumbSwiper, 300);
+    slider.innerHTML = `
+        <div class="swiper-slide">
+            <div class="banner-bg"
+                style="background-image:
+                linear-gradient(rgba(0,0,0,.3), rgba(0,0,0,.3)),
+                url('${bgImage}');">
+            </div>
+        </div>
+    `;
+
+    setTimeout(initBreadcrumbSwiper, 200);
 }
 
+
 /* ============================================================
-   ✅ 6. SWIPER INITIALIZATION
+   ✅ 6. BREADCRUMB SWIPER INIT
 ============================================================ */
 function initBreadcrumbSwiper() {
+    if (!document.querySelector(".home2-banner-slider")) return;
+
     new Swiper(".home2-banner-slider", {
         loop: true,
         autoplay: { delay: 3000 },
@@ -201,11 +252,69 @@ function initBreadcrumbSwiper() {
 }
 
 /* ============================================================
-   ✅ 7. HELPER FUNCTIONS
+   ✅ 7. EXPLORE IMAGE SLIDER
+============================================================ */
+function renderExploreImages(images) {
+    const wrapper = document.querySelector(".package-dt-location-slider .swiper-wrapper");
+    if (!wrapper) return;
+
+    wrapper.innerHTML = "";
+
+    if (!images.length) {
+        wrapper.innerHTML = `
+            <div class="swiper-slide">
+                <div class="location-card">
+                    <img src="assets/img/fav-icon.png" alt="No Image">
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    images.forEach(img => {
+        const imageUrl = formatImage(img);
+        wrapper.innerHTML += `
+            <div class="swiper-slide">
+                <div class="location-card">
+                    <a href="${imageUrl}" class="location-img">
+                        <img src="${imageUrl}" alt="Venue Image">
+                    </a>
+                </div>
+            </div>
+        `;
+    });
+
+    setTimeout(initExploreSwiper, 300);
+}
+
+/* ============================================================
+   ✅ 8. EXPLORE SWIPER INIT
+============================================================ */
+function initExploreSwiper() {
+    if (!document.querySelector(".package-dt-location-slider")) return;
+
+    new Swiper(".package-dt-location-slider", {
+        loop: true,
+        slidesPerView: 3,
+        spaceBetween: 20,
+        navigation: {
+            nextEl: ".location-slider-next",
+            prevEl: ".location-slider-prev",
+        },
+        breakpoints: {
+            320: { slidesPerView: 1 },
+            768: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 }
+        }
+    });
+}
+
+/* ============================================================
+   ✅ 9. HELPER FUNCTIONS
 ============================================================ */
 function setText(selector, value) {
     const el = document.querySelector(selector);
-    if (el) el.textContent = value || "-";
+    if (el) el.textContent = value ?? "-";
 }
 
 function setHref(selector, value) {
@@ -222,6 +331,100 @@ function setYesNo(selector, value) {
 }
 
 /* ============================================================
-   ✅ 8. AUTO LOAD ON PAGE READY
+   ✅ 10. AUTO LOAD
 ============================================================ */
 document.addEventListener("DOMContentLoaded", loadVenueDetails);
+
+/* ============================================================
+   ✅ 11. GOOGLE MAP INITIALIZATION
+============================================================ */
+function initGoogleMap(lat, lng) {
+    if (!window.google || !lat || !lng) return;
+
+    const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 15,
+        center: { lat, lng }
+    });
+
+    new google.maps.Marker({
+        position: { lat, lng },
+        map
+    });
+}
+
+/* ============================================================
+   ✅ 12. DYNAMIC HIGHLIGHTS RENDER
+============================================================ */
+function renderDynamicHighlights(v) {
+    const list = document.getElementById("highlightsList");
+    if (!list || !v) return;
+
+    list.innerHTML = ""; // ✅ Clear old data first
+
+    const highlights = [];
+
+    if (v.acType) highlights.push(`Air Conditioning Type: ${v.acType}`);
+    if (v.washroomsInfo) highlights.push(`Washrooms Available: ${v.washroomsInfo}`);
+    if (v.dressingRooms) highlights.push(`Dressing Rooms: ${v.dressingRooms}`);
+    if (v.seatingArrangement) highlights.push(`Seating Arrangement: ${v.seatingArrangement}`);
+    if (v.maxGuestsSeated) highlights.push(`Seated Guest Capacity: ${v.maxGuestsSeated}`);
+    if (v.maxGuestsStanding) highlights.push(`Standing Guest Capacity: ${v.maxGuestsStanding}`);
+    if (typeof v.multipleHalls === "boolean") {
+        highlights.push(`Multiple Halls Available: ${v.multipleHalls ? "Yes" : "No"}`);
+    }
+    if (v.nearbyTransport) highlights.push(`Nearby Transport: ${v.nearbyTransport}`);
+    if (v.accessibilityInfo) highlights.push(`Accessibility: ${v.accessibilityInfo}`);
+
+    if (!highlights.length) return;
+
+    highlights.forEach(text => {
+        list.innerHTML += `
+            <li>
+                <svg width="16" height="16" viewBox="0 0 16 16"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 8C15 4.13401 11.866 1 8 1C4.13401 1 1 4.13401 1 8C1 11.866 4.13401 15 8 15V16C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0C12.4183 0 16 3.58172 16 8C16 12.4183 12.4183 16 8 16V15C11.866 15 15 11.866 15 8Z" />
+                    <path d="M11.6947 6.45795L7.24644 10.9086L4.3038 8.46699L5.66764 7.10083L6.99596 8.42915L10.3309 5.09179L11.6947 6.45795Z" />
+                </svg>
+                ${text}
+            </li>
+        `;
+    });
+}
+
+/* ============================================================
+   ✅ 13. BREADCRUMB BOTTOM (RATING + SHARE)
+============================================================ */
+function renderBreadcrumbBottom(v) {
+
+    /* ✅ RATING */
+    const ratingEl = document.getElementById("venueRating");
+    const reviewEl = document.getElementById("venueReviews");
+
+    const rating = v?.rating || 0;
+    const reviews = v?.reviewCount || 0;
+
+    if (ratingEl) ratingEl.textContent = `(${rating}/5)`;
+    if (reviewEl) reviewEl.textContent = `based on ${reviews} reviews`;
+
+    /* ✅ SHARE LINKS */
+    const pageUrl = window.location.href;
+    const title = encodeURIComponent(v?.venueName || "Venue");
+
+    const fb = document.getElementById("shareFacebook");
+    const li = document.getElementById("shareLinkedIn");
+    const wa = document.getElementById("shareWhatsApp");
+
+    if (fb) fb.href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+    if (li) li.href = `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`;
+    if (wa) wa.href = `https://wa.me/?text=${title}%20${pageUrl}`;
+
+    /* ✅ COPY LINK */
+    const copyBtn = document.getElementById("copyLink");
+    if (copyBtn) {
+        copyBtn.onclick = function (e) {
+            e.preventDefault();
+            navigator.clipboard.writeText(pageUrl);
+            alert("✅ Venue link copied!");
+        };
+    }
+}

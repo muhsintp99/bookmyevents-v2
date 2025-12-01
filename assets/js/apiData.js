@@ -146,6 +146,7 @@ window.API_DATA = {
 ===================================================== */
 const API_BASE_URL = "https://api.bookmyevent.ae/api";
 const API_BASE_IMG = "https://api.bookmyevent.ae";
+const API_GOOGLE_API = "https://api.bookmyevent.ae";
 
 /* =====================================================
    FORMAT IMAGE (Always Returns Correct Image URL)
