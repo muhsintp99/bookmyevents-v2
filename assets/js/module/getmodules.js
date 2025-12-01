@@ -178,8 +178,8 @@ function loadFilterModules() {
     const filterMap = {
         "Venues": "Venues",
         "Photography": "Photography",
-        "Makeup": "Makeup Artists",
-        "Catering": "Food & Catering"
+        "Makeup": "Makeup",
+        "Catering": "Catering"
     };
 
     // Create dynamic filter list
