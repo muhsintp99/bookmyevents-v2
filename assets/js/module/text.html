@@ -1,11 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <title>Booking Modal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- ✅ Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    .quantity__input { width: 100px; }
+  </style>
 </head>
 <body>
-    <img src="../../img/fav-icon.png" alt="">
+
+<!-- ✅ MODAL -->
+<div class="modal booking-modal fade" id="bookingModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- ✅ SINGLE FORM -->
+      <form id="bookingForm" class="needs-validation" novalidate>
+
+        <button type="button" class="close-btn btn-close ms-auto m-2" data-bs-dismiss="modal"></button>
+
+        <div class="modal-header">
+          <h4>Booking & Availability</h4>
+          <p>Select your travel date & time, easily booking a package.</p>
+        </div>
+
+        <div class="modal-body">
+
+          <!-- ✅ DATE & GUEST -->
+          <div class="row g-4 mb-4">
+
+            <!-- ✅ DATE -->
+            <div class="col-sm-6">
+              <div class="single-field date-field">
+                <input type="text" class="form-control" name="travel_date" value="Sep 12 - Sep 20" readonly required>
+                <div class="invalid-feedback">Please select a date.</div>
+              </div>
+            </div>
+
+            <!-- ✅ GUEST -->
+            <div class="col-sm-6">
+              <div class="single-field">
+
+                <div class="custom-select-dropdown mb-2">
+                  <h6><span id="adult-qty">1</span> Guests</h6>
+                  <span>Select Seat</span>
+                </div>
+
+                <input name="adult_quantity"
+                       type="number"
+                       class="quantity__input form-control"
+                       value="1"
+                       min="1"
+                       required>
+
+                <div class="invalid-feedback">Guest count required.</div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- ✅ USER DETAILS -->
+          <div class="row g-4 mb-4">
+
+            <div class="col-md-6">
+              <div class="form-inner">
+                <label>Full Name</label>
+                <input type="text" name="full_name" class="form-control" placeholder="Your Name" required>
+                <div class="invalid-feedback">Enter your name.</div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-inner">
+                <label>Email</label>
+                <input type="email" name="email" class="form-control" placeholder="Email" required>
+                <div class="invalid-feedback">Valid email required.</div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-inner">
+                <label>Number of People</label>
+                <input type="number" name="people_count" class="form-control" required min="1">
+                <div class="invalid-feedback">Enter number of people.</div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-inner">
+                <label>Tour Details</label>
+                <textarea name="tour_details" class="form-control" required></textarea>
+                <div class="invalid-feedback">Enter tour details.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ✅ SCHEDULE -->
+          <div class="additional-service-area mb-4">
+            <h6>Short Schedule</h6>
+
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="schedule[]" value="Morning">
+              <label class="form-check-label">Morning</label>
+            </div>
+
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="schedule[]" value="Evening">
+              <label class="form-check-label">Evening</label>
+            </div>
+          </div>
+
+          <!-- ✅ TOTAL -->
+          <div class="pricing-area mb-3">
+            <ul>
+              <li class="d-flex justify-content-between">
+                <strong>Total</strong>
+                <strong>$214.00</strong>
+              </li>
+            </ul>
+          </div>
+
+          <!-- ✅ PAYMENT -->
+          <div class="choose-payment-method mb-4">
+            <h6>Select Payment Method</h6>
+
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="payment" value="paypal" required>
+              <label class="form-check-label">PayPal</label>
+            </div>
+
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="payment" value="stripe" required>
+              <label class="form-check-label">Stripe</label>
+            </div>
+
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="payment" value="offline" required>
+              <label class="form-check-label">Offline</label>
+            </div>
+
+            <div class="invalid-feedback d-block">Select a payment method.</div>
+          </div>
+
+          <!-- ✅ BUTTONS -->
+          <div class="btn-area d-flex gap-3">
+            <button type="submit" class="btn btn-primary w-100">Book Now</button>
+            <button type="button" class="btn btn-outline-secondary w-100">Add To Cart</button>
+          </div>
+
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- ✅ OPEN MODAL BUTTON -->
+<div class="container mt-5">
+  <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#bookingModal">
+    Open Booking
+  </button>
+</div>
+
+<!-- ✅ Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ✅ GUEST LIVE UPDATE -->
+<script>
+document.addEventListener("input", function (e) {
+  if (e.target.classList.contains("quantity__input")) {
+    let value = parseInt(e.target.value) || 1;
+    if (value < 1) value = 1;
+    e.target.value = value;
+    document.getElementById("adult-qty").innerText = value;
+  }
+});
+</script>
+
+<!-- ✅ BOOTSTRAP VALIDATION -->
+<script>
+(() => {
+  'use strict';
+  const forms = document.querySelectorAll('.needs-validation');
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      } else {
+        alert("✅ Booking Submitted Successfully!");
+      }
+      form.classList.add('was-validated');
+    }, false);
+  });
+})();
+</script>
+
 </body>
 </html>

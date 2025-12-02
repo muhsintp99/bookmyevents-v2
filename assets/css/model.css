@@ -1,0 +1,1039 @@
+/*===========================
+  01.COMMON CSS 
+===========================*/
+@import url("https://fonts.googleapis.com/css2?family=Courgette&amp;family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;family=Roboto:ital,wght@0,100..900;1,100..900&amp;display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+}
+
+::-moz-selection {
+    background-color: var(--primary-color1);
+    color: var(--white-color);
+}
+
+::selection {
+    background-color: var(--primary-color1);
+    color: var(--white-color);
+}
+
+:root {
+    --font-poppins: "Poppins", sans-serif;
+    --font-roboto: "Roboto", sans-serif;
+    --font-courgette: "Courgette", sans-serif;
+    --white-color: #fff;
+    --white-color-opc: 255, 255, 255;
+    --black-color: #110F0F;
+    --black-color-opc: 17, 15, 15;
+    --title-color: #110F0F;
+    --title-color-opc: 17, 15, 15;
+    --title-color2: #F6F3BC;
+    --title-color2-opc: 246, 243, 188;
+    --text-color: #525252;
+    --white-text-color: #AAAAAA;
+    --primary-color1: #eb2b2b;
+    --primary-color1-opc: 23, 129, 254;
+    --primary-color2: #0EA9D0;
+    --primary-color2-opc: 14, 169, 208;
+    --primary-color3: #285340;
+    --primary-color3-opc: 40, 83, 64;
+    --primary-color4: #1B2072;
+    --primary-color4-opc: 27, 32, 114;
+    --borders-color: #E8E8E8;
+}
+
+/*===========================
+  02.BOOKING MODAL CSS  
+===========================*/
+
+
+.booking-modal-main .modal-dialog {
+    max-width: 872px;
+}
+
+.booking-modal-main .modal-dialog .modal-content {
+    border-radius: 20px;
+    padding: 55px 60px;
+    position: relative;
+}
+
+@media (max-width: 991px) {
+    .booking-modal-main .modal-dialog .modal-content {
+        padding: 55px 40px;
+    }
+}
+
+@media (max-width: 767px) {
+    .booking-modal-main .modal-dialog .modal-content {
+        padding: 45px 35px;
+    }
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content {
+        border-radius: 15px;
+        padding: 45px 20px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .close-btn {
+    width: 36px;
+    height: 36px;
+    background-color: #F0F0F0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    transition: 0.5s;
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .close-btn {
+        top: 15px;
+        right: 15px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .close-btn svg {
+    fill: #FF3927;
+    transition: 0.5s;
+}
+
+.booking-modal-main .modal-dialog .modal-content .close-btn:hover {
+    background-color: #FF3927;
+}
+
+.booking-modal-main .modal-dialog .modal-content .close-btn:hover svg {
+    fill: var(--white-color);
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-header {
+    display: block;
+    text-align: center;
+    padding: 0;
+    border: unset;
+    margin-bottom: 55px;
+}
+
+@media (max-width: 767px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-header {
+        margin-bottom: 45px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-header h4 {
+    margin-bottom: 10px;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-header p {
+    font-size: 16px;
+    max-width: 435px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body {
+    padding: 0;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field {
+    padding: 8px 20px;
+    border: 1px solid var(--borders-color);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    min-height: 62px;
+}
+
+@media (min-width: 1200px) and (max-width: 1399px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .single-field {
+        padding: 8px 15px;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .single-field {
+        padding: 8px 12px;
+        gap: 6px;
+    }
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .single-field {
+        min-height: 52px;
+        padding: 8px 18px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field>svg {
+    fill: var(--text-color);
+    min-width: 18px;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-dropdown {
+    position: relative;
+    line-height: 1;
+    width: 100%;
+    cursor: pointer;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-dropdown input {
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    cursor: pointer;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-dropdown h6 {
+    font-size: 16px;
+    font-family: var(--font-poppins);
+    color: var(--title-color);
+    font-weight: 500;
+    line-height: 1.4;
+    margin-bottom: 0;
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-dropdown h6 {
+        font-size: 15px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-dropdown>span {
+    font-size: 14px;
+    font-family: var(--font-roboto);
+    color: var(--text-color);
+    font-weight: 400;
+    margin-bottom: 0;
+    line-height: 1.4;
+    display: block;
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-dropdown>span {
+        font-size: 11px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap {
+    padding: 10px 0;
+    background-color: var(--white-color);
+    border-radius: 10px;
+    width: 100%;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    z-index: 9;
+    box-shadow: 0px 4px 40px 0px rgba(0, 0, 0, 0.1019607843);
+    display: none;
+    transform: scaleY(0);
+    transform-origin: top;
+    min-width: 320px;
+    left: unset;
+    right: 0;
+    padding: 25px 20px;
+}
+
+@media (max-width: 1199px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap {
+        min-width: 280px;
+    }
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap {
+        left: 50%;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap .title-area {
+    line-height: 1;
+    margin-bottom: 20px;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap .title-area h6 {
+    color: var(--title-color);
+    font-family: var(--font-poppins);
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap .title-area span {
+    color: var(--text-color);
+    font-family: var(--font-roboto);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.4;
+    display: block;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap .guest-count {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    padding: 25px 15px;
+    border: 1px solid var(--borders-color);
+    border-radius: 10px;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap .guest-count .single-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    line-height: 1;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap .guest-count .single-item:last-child {
+    margin-bottom: 0;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap .guest-count .single-item .title h6 {
+    color: var(--title-color);
+    font-family: var(--font-poppins);
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 5px;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap .guest-count .single-item .title span {
+    color: var(--text-color);
+    font-family: var(--font-roboto);
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 0;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap .guest-count .single-item .quantity-counter {
+    display: flex;
+    align-items: center;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap .guest-count .single-item .quantity-counter a {
+    height: 20px;
+    min-width: 20px;
+    max-width: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--primary-color1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.35s;
+    font-size: 17px;
+    color: var(--primary-color1);
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap .guest-count .single-item .quantity-counter a:hover {
+    color: var(--white-color);
+    background-color: var(--primary-color1);
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap .guest-count .single-item .quantity-counter input {
+    width: 40px;
+    background-color: transparent;
+    text-align: center;
+    line-height: 1;
+    color: var(--title-color);
+    font-family: var(--font-roboto);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap.active {
+    display: block;
+    transform: scaleY(1);
+    animation: fade-down 0.3s linear;
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .single-field .custom-select-wrap.active {
+        transform: scaleY(1) translateX(-50%);
+        animation: fade-down2 0.3s linear;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body form {
+    position: relative;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item {
+    border-radius: 10px;
+    border: none;
+    margin-bottom: 25px;
+    background-color: transparent;
+    border: 1px solid var(--borders-color);
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item:last-child {
+    margin-bottom: 0;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item:nth-child(2) .accordion-header .accordion-button .batch span {
+    background-color: #1B2072;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item:nth-child(3) .accordion-header .accordion-button .batch span {
+    background-color: #285340;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item:nth-child(4) .accordion-header .accordion-button .batch span {
+    background-color: #FF8B00;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item:nth-child(5) .accordion-header .accordion-button .batch span {
+    background-color: #0EA9D0;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item:nth-child(6) .accordion-header .accordion-button .batch span {
+    background-color: #D15716;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item:nth-child(7) .accordion-header .accordion-button .batch span {
+    background-color: #2E8B57;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item:nth-child(8) .accordion-header .accordion-button .batch span {
+    background-color: #D39B01;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header {
+    border-radius: 10px;
+    background-color: transparent;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button {
+    border-radius: 10px;
+    padding: 28px 35px;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    position: relative;
+}
+
+@media (max-width: 991px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button {
+        padding: 28px 30px;
+    }
+}
+
+@media (max-width: 767px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button {
+        padding: 28px 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button {
+        padding: 28px 10px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button .batch {
+    position: absolute;
+    top: -10px;
+    left: 35px;
+}
+
+@media (max-width: 991px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button .batch {
+        left: 30px;
+    }
+}
+
+@media (max-width: 767px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button .batch {
+        left: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button .batch {
+        left: 10px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button .batch span {
+    color: var(--white-color);
+    font-family: var(--font-poppins);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1;
+    display: block;
+    padding: 3px 12px;
+    border-radius: 100px;
+    background-color: var(--primary-color1);
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button .title-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button .title-area {
+        gap: 7px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button .title-area .check {
+    min-width: 20px;
+    max-width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: rgba(var(--black-color-opc), 0.16);
+    position: relative;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button .title-area .check::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    background-color: var(--white-color);
+    border-radius: 50%;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button .title-area h6 {
+    color: var(--title-color);
+    font-family: var(--font-poppins);
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.4;
+    margin-bottom: 0;
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button .title-area h6 {
+        font-size: 17px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button>span {
+    color: var(--title-color);
+    font-family: var(--font-poppins);
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 1;
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button>span {
+        font-size: 17px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button::after {
+    display: none;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button:not(.collapsed) {
+    box-shadow: none;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding-bottom: 20px;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button:not(.collapsed) .title-area .check {
+    background-color: var(--primary-color1);
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button:not(.collapsed) .title-area .check::before {
+    content: "\f26e";
+    font-family: bootstrap-icons !important;
+    width: unset;
+    height: unset;
+    color: var(--white-color);
+    background-color: transparent;
+    font-size: 20px;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-header .accordion-button:focus {
+    border-radius: 10px;
+    box-shadow: none;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body {
+    padding: 0px 35px 35px 55px;
+    border: 1px solid transparent;
+    border-top: none;
+    background-color: var(--white-color);
+    border-radius: 0 0 10px 10px;
+}
+
+@media (max-width: 991px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body {
+        padding: 0px 30px 35px 50px;
+    }
+}
+
+@media (max-width: 767px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body {
+        padding: 0px 20px 35px 35px;
+    }
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body {
+        padding: 0px 10px 35px 25px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .tour-info-and-calculate-area {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding-left: 10px;
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .tour-info-and-calculate-area {
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .tour-info-and-calculate-area p {
+    color: var(--text-color);
+    font-size: 16px;
+    line-height: 24px;
+    margin-bottom: 0;
+    max-width: 410px;
+    width: 100%;
+}
+
+@media (max-width: 767px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .tour-info-and-calculate-area p {
+        max-width: 290px;
+        font-size: 15px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .tour-info-and-calculate-area p i {
+    font-size: 12px;
+    margin: 0 2px;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .tour-info-and-calculate-area .price-calculate {
+    text-align: end;
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .tour-info-and-calculate-area .price-calculate {
+        text-align: start;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .tour-info-and-calculate-area .price-calculate span {
+    color: var(--text-color);
+    font-family: var(--font-roboto);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1;
+    display: block;
+    margin-bottom: 14px;
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .tour-info-and-calculate-area .price-calculate span {
+        font-size: 15px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .tour-info-and-calculate-area .price-calculate span:last-child {
+    margin-bottom: 0;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .tour-info-and-calculate-area .price-calculate span i::before {
+    font-weight: 600 !important;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area {
+    margin-bottom: 45px;
+}
+
+@media (max-width: 767px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area {
+        margin-bottom: 35px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area h6 {
+    color: var(--title-color);
+    font-family: var(--font-poppins);
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 28px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area h6 {
+        font-size: 17px;
+        margin-bottom: 15px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li {
+        flex-wrap: wrap;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li:last-child {
+    margin-bottom: 0;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .service-info-wrap {
+    display: flex;
+    align-items: start;
+    gap: 10px;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .service-info-wrap .containerss {
+    display: flex;
+    position: relative;
+    padding-left: 15px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .service-info-wrap .containerss input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .service-info-wrap .containerss input:checked~.checkmark {
+    background-color: transparent;
+    border-color: var(--primary-color1);
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .service-info-wrap .containerss input:checked~.checkmark::after {
+    content: "\f26e";
+    font-family: bootstrap-icons;
+    color: var(--white-color);
+    line-height: 1;
+    font-size: 14px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--primary-color1);
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .service-info-wrap .containerss .checkmark {
+    position: absolute;
+    top: 1px;
+    left: 0;
+    height: 16px;
+    width: 16px;
+    background-color: transparent;
+    border-radius: 5px;
+    border: 1px solid var(--primary-color1);
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .service-info-wrap .service-info {
+    max-width: 428px;
+    width: 100%;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .service-info-wrap .service-info h6 {
+    color: var(--title-color);
+    font-family: var(--font-poppins);
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 28px;
+    margin-bottom: 5px;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .service-info-wrap .service-info p {
+    color: var(--text-color);
+    font-size: 16px;
+    line-height: 24px;
+    margin-bottom: 0;
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .service-info-wrap .service-info p {
+        font-size: 15px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .pricing-and-count-area {
+    text-align: end;
+    margin-top: 7px;
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .pricing-and-count-area {
+        margin-top: 0;
+        text-align: start;
+        padding-left: 20px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .pricing-and-count-area span {
+    color: var(--title-color);
+    font-family: var(--font-poppins);
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1;
+    display: block;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .pricing-and-count-area span {
+        margin-bottom: 15px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .pricing-and-count-area .quantity-counter {
+    display: flex;
+    align-items: center;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .pricing-and-count-area .quantity-counter a {
+    height: 24px;
+    min-width: 24px;
+    max-width: 24px;
+    border-radius: 50%;
+    border: 1px solid var(--primary-color1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.35s;
+    font-size: 20px;
+    color: var(--primary-color1);
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .pricing-and-count-area .quantity-counter a:hover {
+    color: var(--white-color);
+    background-color: var(--primary-color1);
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .additional-service-area .service-list li .pricing-and-count-area .quantity-counter input {
+    width: 40px;
+    background-color: transparent;
+    text-align: center;
+    line-height: 1;
+    color: var(--title-color);
+    font-family: var(--font-roboto);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .btn-area {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+@media (max-width: 576px) {
+    .booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .btn-area {
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .btn-area .primary-btn1 {
+    padding: 16px 21px;
+}
+
+.booking-modal-main .modal-dialog .modal-content .modal-body .package-list .accordion .accordion-item .accordion-body .btn-area .primary-btn1.transparent {
+    padding: 14px 21px;
+}
+
+
+/*===========================
+  03.KEYFRAMES
+===========================*/
+.booking-modal-main .single-search-box .custom-select-dropdown {
+  line-height: 1;
+  width: 100%;
+  cursor: pointer;
+}
+
+.booking-modal-main .single-search-box .custom-select-dropdown input {
+  background-color: transparent;
+  color: var(--title-color);
+  font-family: var(--font-poppins);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1;
+  width: 100%;
+  cursor: pointer;
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .booking-modal-main .single-search-box .custom-select-dropdown input {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 576px) {
+  .booking-modal-main .single-search-box .custom-select-dropdown input {
+    font-size: 15px;
+  }
+}
+
+.booking-modal-main .single-search-box .custom-select-dropdown h6 {
+  color: var(--text-color);
+  font-family: var(--font-poppins);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.3px;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .booking-modal-main .single-search-box .custom-select-dropdown h6 {
+    min-width: 150px;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .booking-modal-main .single-search-box .custom-select-dropdown h6 {
+    min-width: unset;
+    font-size: 14px;
+  }
+}
+
+.booking-modal-main .single-search-box .custom-select-dropdown>span {
+  font-size: 14px;
+  font-family: var(--font-roboto);
+  color: var(--text-color);
+  font-weight: 400;
+  margin-bottom: 0;
+  line-height: 1.4;
+  display: block;
+}
+
+@media (max-width: 576px) {
+  .booking-modal-main .single-search-box .custom-select-dropdown>span {
+    font-size: 11px;
+  }
+}
+
+.booking-modal-main .single-search-box .custom-select-dropdown .input-field-value {
+  cursor: pointer;
+}
+
+.booking-modal-main .single-search-box .custom-select-dropdown .input-field-value .destination h6 {
+  font-size: 16px;
+  font-family: var(--font-poppins);
+  color: var(--title-color);
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 0;
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .booking-modal-main .single-search-box .custom-select-dropdown .input-field-value .destination h6 {
+    font-size: 15px;
+  }
+}
+
+.booking-modal-main .single-search-box .custom-select-dropdown .input-field-value .destination span {
+  font-size: 14px;
+  font-family: var(--font-roboto);
+  color: var(--text-color);
+  font-weight: 400;
+  margin-bottom: 0;
+  line-height: 1.4;
+  display: block;
+}
+
+@media (max-width: 576px) {
+  .booking-modal-main .single-search-box .custom-select-dropdown .input-field-value .destination span {
+    font-size: 11px;
+  }
+}
+
+.booking-modal-main .single-search-box .custom-select-dropdown .selected-date h6,
+.booking-modal-main .single-search-box .custom-select-dropdown .hotel-selected-date-checkin h6,
+.booking-modal-main .single-search-box .custom-select-dropdown .hotel-selected-date-checkout h6 {
+  font-size: 16px;
+  font-family: var(--font-poppins);
+  color: var(--title-color);
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 0;
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+
+  .booking-modal-main .single-search-box .custom-select-dropdown .selected-date h6,
+  .booking-modal-main .single-search-box .custom-select-dropdown .hotel-selected-date-checkin h6,
+  .booking-modal-main .single-search-box .custom-select-dropdown .hotel-selected-date-checkout h6 {
+    font-size: 15px;
+  }
+}
+
+.booking-modal-main .single-search-box .custom-select-dropdown .selected-date span,
+.booking-modal-main .single-search-box .custom-select-dropdown .hotel-selected-date-checkin span,
+.booking-modal-main .single-search-box .custom-select-dropdown .hotel-selected-date-checkout span {
+  font-size: 14px;
+  font-family: var(--font-roboto);
+  color: var(--text-color);
+  font-weight: 400;
+  margin-bottom: 0;
+  line-height: 1.4;
+  display: block;
+}
+
+@media (max-width: 576px) {
+
+  .booking-modal-main .single-search-box .custom-select-dropdown .selected-date span,
+  .booking-modal-main .single-search-box .custom-select-dropdown .hotel-selected-date-checkin span,
+  .booking-modal-main .single-search-box .custom-select-dropdown .hotel-selected-date-checkout span {
+    font-size: 11px;
+  }
+}
+
+.booking-modal-main .single-search-box .custom-select-dropdown .hotel-selected-date-checkin .daterangepicker {
+  left: 0;
+}
+
+.booking-modal-main .single-search-box .custom-select-dropdown .hotel-selected-date-checkout .daterangepicker {
+  right: 0 !important;
+  left: unset;
+}

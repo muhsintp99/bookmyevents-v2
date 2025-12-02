@@ -1,5 +1,5 @@
 /* =====================================================
-   WAIT UNTIL API LOADED
+   ✅ WAIT UNTIL API LOADED
 ===================================================== */
 function waitForAPI() {
     if (
@@ -9,46 +9,50 @@ function waitForAPI() {
     ) {
         return setTimeout(waitForAPI, 300);
     }
+
     buildDynamicTabs();
 }
 
+/* =====================================================
+   ✅ FORMAT TEXT (TITLE CASE)
+===================================================== */
 function formatTitleCase(text) {
     if (!text) return "";
     const str = text.toString().toLowerCase();
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-
 /* =====================================================
-   BUILD TABS FROM MODULES
+   ✅ BUILD TABS FROM MODULES
 ===================================================== */
 function buildDynamicTabs() {
     const tabsContainer = document.getElementById("dynamicTabs");
     const tabContentContainer = document.getElementById("dynamicTabContent");
+
+    if (!tabsContainer || !tabContentContainer) return;
 
     tabsContainer.innerHTML = "";
     tabContentContainer.innerHTML = "";
 
     /* ✅ MODULE → API DATA MAP */
     const moduleMap = {
-        Venues: API_DATA.venues,
-        Transport: API_DATA.vehicles,
-        Photography: API_DATA.photographyPackages,
-        Catering: API_DATA.catering,
-        Makeup: API_DATA.makeupPackages,
+        Venues: API_DATA.venues || [],
+        Transport: API_DATA.vehicles || [],
+        Photography: API_DATA.photographyPackages || [],
+        Catering: API_DATA.catering || [],
+        Makeup: API_DATA.makeupPackages || [],
         Ornaments: [],
         Programs: [],
         Events: []
     };
 
     API_DATA.modules.forEach((module, index) => {
-        const moduleName = module.title;   // ✅ Always safe now
+        const moduleName = module.title;
         if (!moduleName) return;
 
         const safeId = "tab-" + moduleName.toLowerCase().replace(/\s+/g, "-");
         const isActive = index === 0 ? "active" : "";
 
-        /* ✅ TAB ICON IMAGE */
         const tabIcon = formatImage(module.icon);
 
         /* ================= TAB BUTTON ================= */
@@ -62,7 +66,7 @@ function buildDynamicTabs() {
                     <img 
                         src="${tabIcon}" 
                         onerror="this.onerror=null;this.src='assets/img/fav-icon.png';"
-                        style="width:16px;height:16px;margin-right:8px;vertical-align:middle;"
+                        style="width:20px;height:20px;margin-right:8px;vertical-align:middle; border-radius:50%;"
                     >
 
                     ${moduleName}
@@ -92,10 +96,9 @@ function buildDynamicTabs() {
 }
 
 /* =====================================================
-   CARD TEMPLATE
+   ✅ CARD TEMPLATE
 ===================================================== */
 function destinationCardTemplate(v) {
-
     const imagesiApp = formatImage(v.thumbnail || v.image);
 
     const imageTag = `
@@ -113,51 +116,30 @@ function destinationCardTemplate(v) {
         v.packageTitle ||
         "Premium Package";
 
-    const formattedTitle = formatTitleCase(rawTitle); // ✅ FIX APPLIED HERE
+    const formattedTitle = formatTitleCase(rawTitle);
 
     return `
-    <div class="swiper-slide">
-        <div class="destination-card">
-            <a href="#" class="destination-img">
-                ${imageTag}
-            </a>
-            <div class="destination-content">
-                <a href="#" class="title-area">
-                    ${formattedTitle}
+        <div class="swiper-slide">
+            <div class="destination-card">
+                <a href="#" class="destination-img">
+                    ${imageTag}
                 </a>
-                <div class="content">
-                    <p>${formatTitleCase(v.description || "Professional service available")}</p>
+                <div class="destination-content">
+                    <a href="#" class="title-area">
+                        ${formattedTitle}
+                    </a>
+                    <div class="content">
+                        <p>${formatTitleCase(v.description || "Professional service available")}</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     `;
 }
 
 /* =====================================================
-   RENDER DATA INTO SWIPER
+   ✅ RENDER ONLY TOP PICKS INTO SWIPER
 ===================================================== */
-// function renderSwiperCards(wrapperSelector, data) {
-//     const wrapper = document.querySelector(wrapperSelector);
-//     if (!wrapper) return;
-
-//     wrapper.innerHTML = "";
-
-//     if (!data || !data.length) {
-//         wrapper.innerHTML = `
-//             <div class="swiper-slide d-flex justify-content-center align-items-center">
-//                 <p style="padding:20px">No data available</p>
-//             </div>
-//         `;
-//         return;
-//     }
-
-//     /* ✅ ONLY 4 PER SLIDER ROW VISUALLY (Swiper Handles It) */
-//     data.slice(0, 12).forEach(item => {
-//         wrapper.innerHTML += destinationCardTemplate(item);
-//     });
-// }
-
 function renderSwiperCards(wrapperSelector, data) {
     const wrapper = document.querySelector(wrapperSelector);
     if (!wrapper) return;
@@ -185,15 +167,14 @@ function renderSwiperCards(wrapperSelector, data) {
         return;
     }
 
-    /* ✅ SHOW ONLY TOP PICKS (MAX 12) */
+    /* ✅ RENDER MAX 12 */
     topPickData.slice(0, 12).forEach(item => {
         wrapper.innerHTML += destinationCardTemplate(item);
     });
 }
 
-
 /* =====================================================
-   INITIALIZE ALL SWIPERS
+   ✅ INITIALIZE ALL SWIPERS (HEIGHT-STABLE)
 ===================================================== */
 function initAllSwipers() {
     document.querySelectorAll(".home1-destination-slider").forEach(swiperEl => {
@@ -201,6 +182,7 @@ function initAllSwipers() {
             slidesPerView: 4,
             spaceBetween: 25,
             loop: true,
+            autoHeight: false,   // ✅ PREVENT HEIGHT JUMP
             pagination: {
                 el: swiperEl.parentElement.querySelector(".paginations"),
                 clickable: true,
@@ -216,6 +198,6 @@ function initAllSwipers() {
 }
 
 /* =====================================================
-   START AFTER API LOAD
+   ✅ START SCRIPT
 ===================================================== */
 waitForAPI();

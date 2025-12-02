@@ -1729,6 +1729,19 @@
     }
   );
 
+  $(document).on("input", ".quantity__input", function () {
+  let value = parseInt($(this).val(), 10);
+
+  if (isNaN(value) || value < 1) {
+    value = 1;
+    $(this).val(1);
+  }
+
+  // Update displayed guest count
+  $("#adult-qty").text(value);
+});
+
+
   // Delete room
   $(document).on("click", ".room-delete-btn", function (e) {
     e.stopPropagation();

@@ -91,7 +91,14 @@ function renderVenueDetails(v) {
         setText("#venueCategory", v.categories.map(c => c.title).join(", "));
     }
 
+    const moduleId = v?.categories?.[0]?.module?._id;
+
     setText("#venueModuleTitle", v?.categories?.[0]?.module?.title);
+    setText("#venueModuleId", moduleId);
+
+    /* ✅ ✅ NOW LOAD CATEGORIES USING MODULE ID */
+    loadCategoriesByModule(moduleId);
+
 
 
     /* ✅ PRICING */
@@ -119,7 +126,7 @@ function renderVenueDetails(v) {
     renderDynamicHighlights(v);
 
     renderBreadcrumbBottom(v);
-} 
+}
 
 /* ============================================================
    ✅ 4. FAQ RENDER FUNCTION
@@ -339,21 +346,44 @@ function setYesNo(selector, value) {
 document.addEventListener("DOMContentLoaded", loadVenueDetails);
 
 /* ============================================================
-   ✅ 11. GOOGLE MAP INITIALIZATION
+   ✅ 11. GOOGLE MAP INITIALIZATION (SUPPORTS BOTH #map & #destinationMap)
 ============================================================ */
 function initGoogleMap(lat, lng) {
-    if (!window.google || !lat || !lng) return;
+    if (!window.google || !lat || !lng) {
+        console.error("❌ Google Maps not ready");
+        return;
+    }
 
-    const map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 15,
-        center: { lat, lng }
+    const mapContainers = [
+        document.getElementById("map"),
+        document.getElementById("destinationMap")
+    ];
+
+    mapContainers.forEach(container => {
+        if (!container) return;
+
+        const map = new google.maps.Map(container, {
+            zoom: 15,
+            center: { lat, lng },
+            mapId: "DEMO_MAP_ID"
+        });
+
+        // ✅ ADVANCED MARKER
+        new google.maps.marker.AdvancedMarkerElement({
+            map,
+            position: { lat, lng },
+            title: "Venue Location"
+        });
     });
 
-    new google.maps.Marker({
-        position: { lat, lng },
-        map
-    });
+    /* ✅ ✅ ADD VIEW IN GOOGLE MAPS LINK */
+    const viewBtn = document.getElementById("viewInGoogleMaps");
+    if (viewBtn) {
+        const mapUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+        viewBtn.href = mapUrl;
+    }
 }
+
 
 /* ============================================================
    ✅ 12. DYNAMIC HIGHLIGHTS RENDER
@@ -429,5 +459,51 @@ function renderBreadcrumbBottom(v) {
             navigator.clipboard.writeText(pageUrl);
             alert("✅ Venue link copied!");
         };
+    }
+}
+
+
+/* ============================================================
+   ✅ 14. FETCH CATEGORIES BY MODULE (AXIOS + CONSOLE LOG)
+============================================================ */
+/* ============================================================
+   ✅ 14. FETCH CATEGORIES BY MODULE (FETCH + CONSOLE LOG)
+============================================================ */
+async function loadCategoriesByModule(moduleId) {
+    console.log("✅ moduleId received:", moduleId);
+
+    if (!moduleId) {
+        console.warn("⚠️ No moduleId found for category fetch");
+        return;
+    }
+
+    try {
+        const res = await fetch(
+            `${API_BASE_URL}/categories/modules/${moduleId}`
+        );
+
+        console.log("✅ Fetch response:", res);
+
+        const json = await res.json();
+
+        if (!json || !json.success || !json.data) {
+            throw new Error("Invalid category API response");
+        }
+
+        const categories = json.data;
+
+        /* ✅ ✅ SHOW ALL CATEGORIES IN CONSOLE */
+        console.log("✅✅ Categories Loaded:", categories);
+
+        categories.forEach((cat, index) => {
+            console.log(`Category ${index + 1}:`, {
+                id: cat._id,
+                title: cat.title,
+                module: cat.module
+            });
+        });
+
+    } catch (err) {
+        console.error("❌ Failed to load module categories:", err);
     }
 }

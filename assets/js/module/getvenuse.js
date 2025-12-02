@@ -47,8 +47,8 @@ function waitForVenueAPI() {
 ===================================================== */
 function truncateText(text, maxLength = 20) {
     if (!text) return "Event Location";
-    return text.length > maxLength 
-        ? text.substring(0, maxLength) + "..." 
+    return text.length > maxLength
+        ? text.substring(0, maxLength) + "..."
         : text;
 }
 
@@ -77,7 +77,7 @@ function renderPopularVenues() {
         const thumbnailImage = formatImage(v.thumbnail);
 
         const venueHTML = `
-        <div class="col-lg-4 col-md-6 wow animate fadeInDown"
+        <div class="col-lg-4 col-md-6 col-6 wow animate fadeInDown"
             data-wow-delay="${200 + index * 100}ms"
             data-wow-duration="1500ms">
 
@@ -101,10 +101,10 @@ function renderPopularVenues() {
                 <div class="package-content">
 
                     <h5>
-                        <a href="package-details.html?id=${v._id}">
-                            ${v.venueName}
-                        </a>
-                    </h5>
+                    <a href="package-details.html?id=${v._id}">
+                    ${v.venueName ? v.venueName.charAt(0).toUpperCase() + v.venueName.slice(1).toLowerCase(): ""}
+                    </a></h5>
+
 
                     <div class="location-and-time">
                         <div class="location">

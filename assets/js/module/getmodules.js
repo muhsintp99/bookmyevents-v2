@@ -18,7 +18,7 @@ function loadMenu() {
     mainMenu.innerHTML = modules.map(m => `
         <li>
             <a href="packages.html?id=${m._id}">
-                <img src="${formatImage(m.icon)}" alt="${m.title}" style="width: 16px; height: 16px; object-fit: contain; margin-right: 8px;"> 
+                <img src="${formatImage(m.icon)}" alt="${m.title}" style="width: 16px; height: 16px; object-fit: cover; margin-right: 8px; border-radius: 50%;"> 
                 ${m.title}
             </a>
         </li>
@@ -28,7 +28,7 @@ function loadMenu() {
     moreMenu.innerHTML = secondary.map(s => `
         <li>
             <a href="packages.html?id=${s._id}">
-                <img src="${formatImage(s.icon)}" alt="${s.title}" style="width: 16px; height: 16px; object-fit: contain; margin-right: 8px;"> 
+                <img src="${formatImage(s.icon)}" alt="${s.title}" style="width: 16px; height: 16px; object-fit: cover; margin-right: 8px; border-radius: 50%;"> 
                 ${s.title}
             </a>
         </li>
@@ -165,29 +165,67 @@ setTimeout(loadFooterSecondaryServices, 500);
 // -------------------------------------------------------------- //----------------
 // -------------------------  in filtering home page   ------------------------------ //
 
+// function loadFilterModules() {
+//     const filterList = document.getElementById("filterList");
+//     if (!filterList) return;
+
+//     // Wait for modules to load
+//     if (API_DATA.modules.length === 0) {
+//         return setTimeout(loadFilterModules, 200);
+//     }
+
+//     // Map API title → Display title
+//     const filterMap = {
+//         "Venues": "Venues",
+//         "Photography": "Photography",
+//         "Makeup": "Makeup",
+//         "Catering": "Catering"
+//     };
+
+//     // Create dynamic filter list
+//     const html = API_DATA.modules
+//         .filter(m => filterMap[m.title]) // only keep the 4 needed modules
+//         .map(m => `
+//             <li class="single-item">
+//                 <img src="${formatImage(m.icon)}" width="24" height="24" alt="${filterMap[m.title]}">
+//                 <span>${filterMap[m.title]}</span>
+//             </li>
+//         `)
+//         .join("");
+
+//     filterList.innerHTML = html;
+
+//     console.log("📌 Filter Modules Loaded:", API_DATA.modules);
+// }
+
+// setTimeout(loadFilterModules, 500);
+
+/* ================= GLOBAL CATEGORY STATE ================= */
+let SELECTED_CATEGORY = { id: null, title: null };
+
+/* ================= LOAD FILTER MODULES ================= */
 function loadFilterModules() {
     const filterList = document.getElementById("filterList");
     if (!filterList) return;
 
-    // Wait for modules to load
-    if (API_DATA.modules.length === 0) {
+    if (!window.API_DATA || !API_DATA.modules || API_DATA.modules.length === 0) {
         return setTimeout(loadFilterModules, 200);
     }
 
-    // Map API title → Display title
     const filterMap = {
         "Venues": "Venues",
         "Photography": "Photography",
-        "Makeup": "Makeup",
+        "Makeup Artist": "Makeup",
         "Catering": "Catering"
     };
 
-    // Create dynamic filter list
     const html = API_DATA.modules
-        .filter(m => filterMap[m.title]) // only keep the 4 needed modules
-        .map(m => `
-            <li class="single-item">
-                <img src="${formatImage(m.icon)}" width="24" height="24" alt="${filterMap[m.title]}">
+        .filter(m => filterMap[m.title])
+        .map((m, index) => `
+            <li class="single-item ${index === 0 ? 'active' : ''}" 
+                data-id="${m._id}" 
+                data-title="${m.title}">
+                <img src="${formatImage(m.icon)}">
                 <span>${filterMap[m.title]}</span>
             </li>
         `)
@@ -195,9 +233,119 @@ function loadFilterModules() {
 
     filterList.innerHTML = html;
 
-    console.log("📌 Filter Modules Loaded:", API_DATA.modules);
+    const firstModule = filterList.querySelector(".single-item");
+    if (firstModule) {
+        loadCategoriesByModule(firstModule.dataset.id);
+    }
 }
-
 setTimeout(loadFilterModules, 500);
 
+/* ================= MODULE CLICK ================= */
+document.addEventListener("click", function (e) {
+    const item = e.target.closest("#filterList .single-item");
+    if (!item) return;
 
+    document.querySelectorAll("#filterList .single-item")
+        .forEach(i => i.classList.remove("active"));
+
+    item.classList.add("active");
+
+    loadCategoriesByModule(item.dataset.id);
+});
+
+/* ================= CATEGORY API ================= */
+async function loadCategoriesByModule(moduleId) {
+    try {
+        const res = await fetch(`${API_BASE_URL}/categories/modules/${moduleId}`);
+
+        
+
+        console.log("📡 Category API Response:", res);
+        console.log(res);
+        const data = await res.json();
+
+        const list = document.querySelector(".option-list");
+        list.innerHTML = "";
+
+        data.forEach(cat => {
+            list.innerHTML += `
+                <li class="single-item" data-id="${cat._id}">
+                    <h6>${cat.title}</h6>
+                </li>
+            `;
+        });
+
+    } catch (err) {
+        console.error("❌ Category Load Failed:", err);
+    }
+}
+
+/* ================= ZONES LOAD ================= */
+function loadZones() {
+    const zoneList = document.querySelector(".option-list-destination");
+    if (!zoneList || !API_DATA.zone) return;
+
+    let html = `
+        <li class="btn" id="getLocationBtn">
+            <div class="destination"><h6>Get Location</h6></div>
+        </li>
+    `;
+
+    API_DATA.zone.forEach(z => {
+        html += `
+            <li class="zone-item" data-zone="${z.name}">
+                <div class="destination"><h6>${z.name}</h6></div>
+            </li>
+        `;
+    });
+
+    zoneList.innerHTML = html;
+}
+loadZones();
+
+/* ================= GOOGLE LOCATION ================= */
+document.addEventListener("click", function (e) {
+    if (!e.target.closest("#getLocationBtn")) return;
+
+    navigator.geolocation.getCurrentPosition(position => {
+        document.querySelector(".destination-dropdown input").value =
+            `Lat:${position.coords.latitude.toFixed(4)}, Lng:${position.coords.longitude.toFixed(4)}`;
+    });
+});
+
+/* ================= ZONE SELECT ================= */
+document.addEventListener("click", function (e) {
+    const zone = e.target.closest(".zone-item");
+    if (!zone) return;
+    document.querySelector(".destination-dropdown input").value = zone.dataset.zone;
+});
+
+/* ================= CATEGORY SELECT ================= */
+document.addEventListener("click", function (e) {
+    const cat = e.target.closest(".option-list .single-item");
+    if (!cat) return;
+
+    SELECTED_CATEGORY.id = cat.dataset.id;
+    SELECTED_CATEGORY.title = cat.querySelector("h6").innerText;
+
+    document.querySelector(".custom-select-dropdown span").innerText =
+        SELECTED_CATEGORY.title;
+});
+
+/* ================= FINAL SEARCH ================= */
+document.querySelector(".filter-input").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const destination = document.querySelector(".destination-dropdown input").value;
+    const date = document.querySelector("[name='inOut']").value;
+    const activeModule = document.querySelector("#filterList .active");
+
+    console.clear();
+    console.log("✅ FINAL SEARCH DATA");
+    console.log("📍 Destination:", destination);
+    console.log("📅 Date:", date);
+    console.log("📂 Category:", SELECTED_CATEGORY.title);
+    console.log("🆔 Category ID:", SELECTED_CATEGORY.id);
+    console.log("🧩 Module:", activeModule.dataset.title);
+    console.log("🆔 Module ID:", activeModule.dataset.id);
+});
