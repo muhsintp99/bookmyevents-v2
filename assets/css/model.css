@@ -1037,3 +1037,7 @@
   right: 0 !important;
   left: unset;
 }
+
+.booking-modal-main .single-search-box .custom-select-dropdown.destination-dropdown input {
+  display: none;
+}

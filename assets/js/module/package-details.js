@@ -466,9 +466,6 @@ function renderBreadcrumbBottom(v) {
 /* ============================================================
    ✅ 14. FETCH CATEGORIES BY MODULE (AXIOS + CONSOLE LOG)
 ============================================================ */
-/* ============================================================
-   ✅ 14. FETCH CATEGORIES BY MODULE (FETCH + CONSOLE LOG)
-============================================================ */
 async function loadCategoriesByModule(moduleId) {
     console.log("✅ moduleId received:", moduleId);
 
@@ -507,3 +504,20 @@ async function loadCategoriesByModule(moduleId) {
         console.error("❌ Failed to load module categories:", err);
     }
 }
+
+/* ============================================================
+   ✅ 15. Booking Button Handler
+============================================================ */
+
+document.getElementById("bookNowBtn").addEventListener("click", function () {
+    const id = getVenueId();
+    if (!id) {
+        alert("Venue ID not found!");
+        return;
+    }
+
+    // ✅ SEND ID to booking.html
+    window.location.href = "booking.html?id=" + id;
+});
+
+
