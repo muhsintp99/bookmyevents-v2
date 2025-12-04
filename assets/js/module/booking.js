@@ -1,125 +1,32 @@
-/* =====================================================
-   ✅ INJECT CHECKOUT CSS FROM JS
-===================================================== */
-(function injectCheckoutCSS() {
-    const css = `
-    :root {
-        --main-color: #eb2b2b;
-    }
+let venueData = null;
+let selectedMenuPrice = 0;
+let selectedSession = "";
+let selectedPreference = "AC";
+let discountApplied = 0;
 
-    .primary-btn1 {
-        background: var(--main-color);
-        color: #fff;
-        border-radius: 8px;
-        border: none;
-    }
-
-    /* ===============================
-       PREFERENCE ICONS
-    ================================= */
-    .choose-Preference-method ul {
-        display: flex;
-        gap: 15px;
-    }
-
-    .choose-Preference-method li {
-        width: 80px;
-        height: 80px;
-        border: 2px solid #eee;
-        border-radius: 12px;
-        cursor: pointer;
-        position: relative;
-        transition: 0.3s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .choose-Preference-method li.active {
-        border-color: var(--main-color);
-    }
-
-    .choose-Preference-method .checked {
-        position: absolute;
-        top: 6px;
-        right: 6px;
-        background: var(--main-color);
-        color: #fff;
-        border-radius: 50%;
-        padding: 2px 6px;
-        font-size: 12px;
-    }
-
-    /* ===============================
-       MENU CARDS
-    ================================= */
-    .menu-card {
-        border: 2px solid #eee;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: 0.25s;
-        position: relative;
-        padding: 5px;
-    }
-
-    .menu-card.active {
-        border-color: var(--main-color);
-    }
-
-    .menu-card .checked {
-        position: absolute;
-        top: 6px;
-        right: 6px;
-        background: var(--main-color);
-        color: #fff;
-        border-radius: 50%;
-        padding: 2px 6px;
-    }
-
-    /* ===============================
-       ORDER SUMMARY
-    ================================= */
-    .order-sum-area ul {
-        padding: 0;
-        list-style: none;
-    }
-
-    .order-sum-area li {
-        margin-bottom: 14px;
-    }
-
-    .d-none {
-        display: none !important;
-    }
-    `;
-
-    const styleTag = document.createElement("style");
-    styleTag.innerHTML = css;
-    document.head.appendChild(styleTag);
-})();
-
-
-/* =====================================================
-   FORMAT IMAGE
-===================================================== */
-function formatImage(path) {
-    if (!path) return "assets/img/fav-icon.png";
-    if (path.startsWith("http")) return path;
-    path = path.replace(/^\//, "");
-    return `${API_BASE_IMG}/${path}`;
-}
-
-/* =====================================================
-   GET VENUE ID FROM URL
-===================================================== */
+/* ======================================================
+   ✅ GET ID FROM URL
+====================================================== */
 function getVenueId() {
     const params = new URLSearchParams(window.location.search);
     return params.get("id");
 }
 
-/* =====================================================
-   FETCH VENUE DETAILS
-===================================================== */
+/* ======================================================
+   ✅ IMAGE FORMATTER
+====================================================== */
+function formatImage(path) {
+    if (!path) return "assets/img/fav-icon.png";
+    if (path.startsWith("http")) return path;
+    if (path.startsWith("/var/www/backend/")) {
+        path = path.replace("/var/www/backend/", "");
+    }
+    return `${API_BASE_IMG}/${path.replace(/^\/+/, "")}`;
+}
+
+/* ======================================================
+   ✅ LOAD VENUE
+====================================================== */
 async function loadVenueDetails() {
     const id = getVenueId();
     if (!id) return;
@@ -129,33 +36,64 @@ async function loadVenueDetails() {
         const json = await res.json();
         if (!json.success) return;
 
-        renderVenueDetails(json.data);
-
+        venueData = json.data;
+        renderVenue(venueData);
     } catch (err) {
-        console.error("Venue Load Error:", err);
+        console.error("❌ API Error:", err);
     }
 }
 
-/* =====================================================
-   RENDER VENUE DETAILS
-===================================================== */
-function renderVenueDetails(venue) {
+/* ======================================================
+   ✅ FLATPICKR SETUP
+====================================================== */
+function setupFlatpickrCalendar(pricingSchedule) {
+    if (!pricingSchedule) return;
 
-    /* ✅ ORDER SUMMARY - VENUE */
+    const allowedDays = [];
+
+    Object.keys(pricingSchedule).forEach(day => {
+        if (pricingSchedule[day]?.morning || pricingSchedule[day]?.evening) {
+            allowedDays.push(day.toLowerCase());
+        }
+    });
+
+    document.getElementById("dateHint").innerText =
+        "Available Days: " + allowedDays.join(", ");
+
+    flatpickr("#eventDate", {
+        dateFormat: "d-M-Y",
+        minDate: "today",
+        disable: [
+            function (date) {
+                const dayName = date.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
+                return !allowedDays.includes(dayName);
+            }
+        ],
+        defaultDate: "today",
+        onChange: function () {
+            calculateTotal(); // ✅ recalc when date changes
+        }
+    });
+}
+
+/* ======================================================
+   ✅ RENDER VENUE
+====================================================== */
+function renderVenue(venue) {
     const venueItem = document.getElementById("venueSummaryItem");
+    if (!venueItem) return;
 
-    let moduleId = venue.categories?.[0]?.module?._id || null;
-    let moduleTitle = venue.categories?.[0]?.module?.title || "Venues";
+    const categoryTitle = venue.categories?.[0]?.title || "Venue";
 
     venueItem.innerHTML = `
         <div class="item-area">
             <div class="main-item">
                 <div class="item-img">
-                    <img src="${formatImage(venue.thumbnail)}" alt="${venue.venueName}">
+                    <img src="${formatImage(venue.thumbnail)}">
                 </div>
                 <div class="content-and-quantity">
                     <div class="content">
-                        <span>${moduleTitle}</span>
+                        <span>${categoryTitle}</span>
                         <h6>${venue.venueName}</h6>
                     </div>
                 </div>
@@ -163,38 +101,14 @@ function renderVenueDetails(venue) {
         </div>
     `;
 
-    if (moduleId) loadCategoriesByModule(moduleId);
-
     handlePreferenceVisibility(venue);
     handleMenuVisibility(venue.packages || []);
+    setupFlatpickrCalendar(venue.pricingSchedule);
 }
 
-/* =====================================================
-   LOAD CATEGORIES BY MODULE
-===================================================== */
-async function loadCategoriesByModule(moduleId) {
-    try {
-        const res = await fetch(`${API_BASE_URL}/categories/modules/${moduleId}`);
-        const json = await res.json();
-        if (!json.success) return;
-
-        const select = document.getElementById("categorySelect");
-        select.innerHTML = `<option value="">Select Category</option>`;
-
-        json.data.forEach(cat => {
-            const opt = document.createElement("option");
-            opt.value = cat._id;
-            opt.textContent = cat.title;
-            select.appendChild(opt);
-        });
-    } catch (err) {
-        console.error("Category Load Error:", err);
-    }
-}
-
-/* =====================================================
-   AC / FAN VISIBILITY
-===================================================== */
+/* ======================================================
+   ✅ AC / NON-AC
+====================================================== */
 function handlePreferenceVisibility(venue) {
     const ac = document.querySelector(".acAvailable");
     const fan = document.querySelector(".fanAvailable");
@@ -202,18 +116,20 @@ function handlePreferenceVisibility(venue) {
     if (ac) ac.style.display = venue.acAvailable ? "flex" : "none";
     if (fan) fan.style.display = venue.nonAcAvailable ? "flex" : "none";
 
-    // Toggle Selection
     document.querySelectorAll(".Preference-option li").forEach(item => {
         item.addEventListener("click", function () {
             document.querySelectorAll(".Preference-option li").forEach(li => li.classList.remove("active"));
             this.classList.add("active");
+
+            selectedPreference = this.classList.contains("acAvailable") ? "AC" : "NON-AC";
+            calculateTotal();
         });
     });
 }
 
-/* =====================================================
-   SHOW / HIDE & LOAD MENUS
-===================================================== */
+/* ======================================================
+   ✅ MENU LOAD
+====================================================== */
 function handleMenuVisibility(packages) {
     const menuSection = document.querySelector(".choose-menu-method");
     const menuList = document.getElementById("menuList");
@@ -223,13 +139,12 @@ function handleMenuVisibility(packages) {
         return;
     }
 
-    menuSection.style.display = "block";
     menuList.innerHTML = "";
 
     packages.forEach(pkg => {
         const li = document.createElement("li");
         li.className = "menu-card";
-        li.setAttribute("data-menu-id", pkg._id);
+        li.dataset.price = pkg.price;
 
         li.innerHTML = `
             <div class="menu-content">
@@ -245,61 +160,153 @@ function handleMenuVisibility(packages) {
             </div>
             <div class="checked"><i class="bi bi-check"></i></div>
         `;
-
         menuList.appendChild(li);
     });
 
-    initializeMenuSelection();
+    activateMenuSelection();
 }
 
-/* =====================================================
-   MENU SELECTION
-===================================================== */
-function initializeMenuSelection() {
-    const menuItems = document.querySelectorAll(".menu-card");
-
-    menuItems.forEach(item => {
-        item.addEventListener("click", function () {
-            menuItems.forEach(i => i.classList.remove("active"));
+/* ======================================================
+   ✅ MENU SELECTION
+====================================================== */
+function activateMenuSelection() {
+    document.querySelectorAll(".menu-card").forEach(card => {
+        card.addEventListener("click", function () {
+            document.querySelectorAll(".menu-card").forEach(c => c.classList.remove("active"));
             this.classList.add("active");
 
-            updateOrderSummaryWithMenu({
-                id: this.dataset.menuId,
-                title: this.querySelector(".menu-title").textContent,
-                service: this.querySelector(".menu-service").textContent,
-                type: this.querySelector(".menu-type").textContent,
-                image: this.querySelector("img").src
-            });
+            selectedMenuPrice = parseFloat(this.dataset.price || 0);
+
+            document.getElementById("summaryImg").src = this.querySelector("img").src;
+            document.getElementById("summaryService").innerText = this.querySelector(".menu-service").innerText;
+            document.getElementById("summaryTitle").innerText = this.querySelector(".menu-title").innerText;
+
+            document.getElementById("menuError").style.display = "none";
+
+            calculateTotal();
         });
     });
 }
 
-/* =====================================================
-   UPDATE ORDER SUMMARY - MENU ONLY
-===================================================== */
-function updateOrderSummaryWithMenu(menuData) {
-    const menuItem = document.getElementById("menuSummaryItem");
-    menuItem.classList.remove("d-none");
+/* ======================================================
+   ✅ SESSION (Morning / Evening)
+====================================================== */
+document.querySelectorAll(".session-check").forEach((check, index) => {
+    check.addEventListener("change", function () {
+        document.querySelectorAll(".session-check").forEach(c => c.checked = false);
+        this.checked = true;
+        selectedSession = index === 0 ? "morning" : "evening";
+        calculateTotal();
+    });
+});
 
-    menuItem.innerHTML = `
-        <div class="item-area">
-            <div class="main-item">
-                <div class="item-img">
-                    <img src="${menuData.image}">
-                </div>
-                <div class="content-and-quantity">
-                    <div class="content">
-                        <span>${menuData.service}</span>
-                        <h6>${menuData.title}</h6>
-                        <p style="font-size:12px">${menuData.type}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
+/* ======================================================
+   ✅ ✅ ✅ FINAL TOTAL LOGIC (FIXED)
+   ✅ Total = perDay + (guest × menu price)
+====================================================== */
+function calculateTotal() {
+    if (!venueData) return;
+
+    const guest = parseInt(document.getElementById("guestCount").value || 1);
+    const date = document.getElementById("eventDate").value;
+    if (!date || !selectedSession) return;
+
+    const day = new Date(date).toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
+    const pricing = venueData.pricingSchedule?.[day]?.[selectedSession];
+
+    if (!pricing) {
+        document.getElementById("totalAmount").innerText = "0.00";
+        return;
+    }
+
+    // ✅ FIXED FORMULA
+    let venueCost = pricing.perDay || 10000;  
+    let menuCost = selectedMenuPrice * guest;
+    let total = venueCost + menuCost;
+
+    if (venueData.discount?.packageDiscount) {
+        total -= (total * venueData.discount.packageDiscount / 100);
+    }
+
+    if (discountApplied > 0) {
+        total -= (total * discountApplied / 100);
+    }
+
+    document.getElementById("totalAmount").innerText = total.toFixed(2);
 }
 
-/* =====================================================
-   INIT
-===================================================== */
+document.getElementById("guestCount")?.addEventListener("input", calculateTotal);
+document.getElementById("eventDate")?.addEventListener("change", calculateTotal);
+
+/* ======================================================
+   ✅ COUPON
+====================================================== */
+document.querySelector(".apply-btn")?.addEventListener("click", function () {
+    const code = document.getElementById("couponInput").value.trim();
+
+    if (code === "SAVE10") {
+        discountApplied = 10;
+        alert("✅ 10% Discount");
+    } else {
+        discountApplied = 0;
+        alert("❌ Invalid Coupon");
+    }
+
+    calculateTotal();
+});
+
+/* ======================================================
+   ✅ PLACE ORDER
+====================================================== */
+document.getElementById("placeOrderBtn")?.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    const form = document.getElementById("checkoutForm");
+
+    if (!form.checkValidity()) {
+        form.classList.add("was-validated");
+        scrollToFirstError();
+        return;
+    }
+
+    if (!selectedSession) {
+        alert("❌ Please select session");
+        return;
+    }
+
+    if (!document.querySelector(".menu-card.active")) {
+        document.getElementById("menuError").style.display = "block";
+        return;
+    }
+
+    const orderData = {
+        venue: venueData.venueName,
+        fullName: document.getElementById("fullName").value,
+        phone: document.getElementById("phoneNumber").value,
+        email: document.getElementById("email").value,
+        guest: document.getElementById("guestCount").value,
+        date: document.getElementById("eventDate").value,
+        session: selectedSession,
+        preference: selectedPreference,
+        total: document.getElementById("totalAmount").innerText
+    };
+
+    console.log("✅ FINAL BOOKING:", orderData);
+    alert("✅ Order Submitted Successfully!");
+});
+
+/* ======================================================
+   ✅ SCROLL TO FIRST INVALID FIELD
+====================================================== */
+function scrollToFirstError() {
+    const firstInvalid = document.querySelector(".was-validated .form-control:invalid");
+    if (firstInvalid) {
+        firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+        firstInvalid.focus();
+    }
+}
+
+/* ======================================================
+   ✅ START
+====================================================== */
 document.addEventListener("DOMContentLoaded", loadVenueDetails);

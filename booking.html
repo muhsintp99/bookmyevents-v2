@@ -31,6 +31,9 @@
     <!--  Style CSS  -->
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/model.css">
+    <!-- flatpicker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
     <!-- Title -->
     <title>Book My Event - Booking</title>
     <link rel="shortcut icon" href="assets/img/fav-icon.png" type="image/x-icon" sizes="20x20">
@@ -281,10 +284,10 @@
     <!-- header Section End-->
 
 
-
-    <!-- Checkout Page Start-->
+    <!-- ✅ CHECKOUT PAGE START -->
     <div class="checkout-page pt-100 mb-100">
         <div class="container">
+
             <div class="checkout-form-title">
                 <h4>Booking & Availability</h4>
                 <p>Select your Event date & time, easily booking a package.</p>
@@ -292,7 +295,7 @@
 
             <div class="row g-lg-4 gy-5">
 
-                <!-- ================= LEFT FORM ================= -->
+                <!-- ✅ LEFT FORM -->
                 <div class="col-lg-7">
                     <div class="checkout-form-wrapper">
                         <div class="checkout-form">
@@ -300,97 +303,126 @@
                             <form class="needs-validation" novalidate id="checkoutForm">
                                 <div class="row">
 
-                                    <!-- Full Name -->
+                                    <!-- ✅ FULL NAME -->
                                     <div class="col-md-6">
                                         <div class="form-inner two mb-25">
                                             <label>Full Name*</label>
-                                            <input type="text" class="form-control" required>
+                                            <input type="text" class="form-control" id="fullName"
+                                                placeholder="Enter your fullname" required>
+                                            <div class="invalid-feedback">Full Name is required</div>
                                         </div>
                                     </div>
 
-                                    <!-- Phone -->
+                                    <!-- ✅ PHONE -->
                                     <div class="col-md-6">
                                         <div class="form-inner two mb-25">
                                             <label>Phone Number*</label>
-                                            <input type="tel" class="form-control" required>
+                                            <input type="tel" class="form-control" id="phoneNumber"
+                                                placeholder="Enter your Phone Number" required>
+                                            <div class="invalid-feedback">Phone Number is required</div>
                                         </div>
                                     </div>
 
-                                    <!-- Email -->
+                                    <!-- ✅ EMAIL -->
                                     <div class="col-md-6">
                                         <div class="form-inner two mb-25">
-                                            <label>Email Address <span>(Optional)</span></label>
-                                            <input type="email" class="form-control">
+                                            <label>Email Address</label>
+                                            <input type="email" class="form-control" id="email"
+                                                placeholder="Enter your Email Address" required>
+                                            <div class="invalid-feedback">Phone Number is required</div>
+
                                         </div>
                                     </div>
 
-                                    <!-- Contact -->
-                                    <div class="col-md-6">
-                                        <div class="form-inner two mb-25">
-                                            <label>Your Contact Number*</label>
-                                            <input type="tel" class="form-control" required>
-                                        </div>
-                                    </div>
+                                    
 
-                                    <!-- Event Date -->
-                                    <div class="col-md-6">
+                                    <!-- ✅ EVENT DATE -->
+                                    <!--  <div class="col-md-6">
                                         <div class="form-inner two mb-25">
                                             <label>Event Date*</label>
-                                            <input type="date" class="form-control" id="eventDate" required>
-                                        </div>
-                                    </div>
-
-                                    <!-- Guest -->
-                                    <div class="col-md-6">
-                                        <div class="form-inner two mb-25">
-                                            <label>Guest*</label>
-                                            <input type="number" class="form-control" required>
-                                        </div>
-                                    </div>
-
-                                    <!-- ================= CATEGORY ================= -->
-                                    <!-- <div class="col-md-6">
-                                        <div class="form-inner two mb-25">
-                                            <label>Category*</label>
-                                            <select class="form-control" id="categorySelect">
-                                                <option value="">Select Category</option>
-                                            </select>
+                                            <input type="date" class="form-control" id="eventDate"  placeholder="Select Event Date" required>
+                                            <div class="invalid-feedback">Event date is required</div>
                                         </div>
                                     </div> -->
 
-                                    <!-- ================= SESSION ================= -->
+                                    <div class="col-md-6">
+                                        <div class="form-inner two mb-25">
+                                            <label>Event Date*</label>
+
+                                            <!-- ✅ Flatpickr Input -->
+                                            <input type="text" class="form-control booking-date" id="eventDate"
+                                                placeholder="Select Date" required>
+
+                                            <div class="invalid-feedback">
+                                                Please select a valid available date
+                                            </div>
+
+                                            <small id="dateHint" class="text-muted"></small>
+                                        </div>
+                                    </div>
+
+
+
+                                    <style>
+                                        /* ✅ Custom Calendar Design */
+                                        .booking-date {
+                                            border: 2px solid #ddd;
+                                            border-radius: 10px;
+                                            padding: 12px;
+                                            font-weight: 600;
+                                            cursor: pointer;
+                                            background: #fff;
+                                        }
+
+                                        .booking-date:focus {
+                                            border-color: #eb2b2b;
+                                            box-shadow: 0 0 0 0.2rem rgba(235, 43, 43, 0.15);
+                                        }
+
+
+                                        .booking-date:disabled {
+                                            background: #f3f3f3;
+                                            cursor: not-allowed;
+                                        }
+                                    </style>
+
+
+                                    <!-- ✅ SESSION (MORNING / EVENING) -->
                                     <div class="col-md-12">
                                         <div class="form-inner2 two mb-25">
-                                            <label>Session*</label>
+                                            <label> Session*</label>
 
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="morningSession">
-                                                <label class="form-check-label" for="morningSession">
-                                                    <img src="assets/img/home/SVG/cloudy-day-svgrepo-com.svg" style="width: 20px;" alt="">
+                                                <input class="form-check-input session-check" type="checkbox" required>
+                                                <label class="form-check-label">
+                                                    <img src="assets/img/home/SVG/cloudy-day-svgrepo-com.svg"
+                                                        style="width: 26px; height: 26px; margin-right: 10px;">
                                                     Morning Section
                                                 </label>
                                             </div>
 
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="eveningSession">
-                                                <label class="form-check-label" for="eveningSession">
-                                                    <img src="assets/img/home/SVG/dawn-and-sea-svgrepo-com.svg" style="width: 20px;" alt="">
+                                                <input class="form-check-input session-check" type="checkbox" required>
+                                                <label class="form-check-label">
+                                                    <img src="assets/img/home/SVG/dawn-and-sea-svgrepo-com.svg"
+                                                        style="width: 26px; height: 26px; margin-right: 10px;">
                                                     Evening Section
                                                 </label>
+                                            </div>
+
+                                            <div class="invalid-feedback">
+                                                You must select a session
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- ✅ ✅ ✅ EXACT PREFERENCE STYLE YOU ASKED -->
+                                    <!-- ✅ AC / FAN -->
                                     <div class="col-md-12">
                                         <div class="choose-Preference-method">
                                             <label class="mb-3">Select your Preference</label>
-
                                             <div class="Preference-option">
                                                 <ul>
-
-                                                    <li class="acAvailable active"
-                                                        style="display: flex; justify-content: center; align-items: center;">
+                                                    <li class="acAvailable active">
                                                         <img src="assets/img/home/SVG/air-conditioning-ind-svgrepo-com.svg"
                                                             height="40px">
                                                         <div class="checked">
@@ -398,30 +430,41 @@
                                                         </div>
                                                     </li>
 
-                                                    <li class="fanAvailable"
-                                                        style="display: flex; justify-content: center; align-items: center;">
+                                                    <li class="fanAvailable">
                                                         <img src="assets/img/home/SVG/fan-svgrepo-com.svg"
                                                             height="50px">
                                                         <div class="checked">
                                                             <i class="bi bi-check"></i>
                                                         </div>
                                                     </li>
-
                                                 </ul>
                                             </div>
+
                                         </div>
                                     </div>
-
-                                    <!-- ================= MENU ================= -->
+                                    <!-- ✅ MENU FROM API -->
                                     <div class="col-md-12">
                                         <div class="choose-menu-method">
                                             <label class="mb-3">Select Your Menu*</label>
-
                                             <div class="menu-option">
                                                 <ul id="menuList">
-                                                    <!-- Dynamic from JS -->
+                                                    <!-- ✅ API MENU LOADS HERE -->
                                                 </ul>
                                             </div>
+                                            <div class="invalid-feedback d-block" id="menuError" style="display:none">
+                                                Please select a menu
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                    <!-- ✅ GUEST -->
+                                    <div class="col-md-6">
+                                        <div class="form-inner two mb-25">
+                                            <label>Guest*</label>
+                                            <input type="number" class="form-control" id="guestCount"
+                                                placeholder="Enter Guest Number" min="1" required>
+                                            <div class="invalid-feedback">Guest count is required</div>
                                         </div>
                                     </div>
 
@@ -432,47 +475,67 @@
                     </div>
                 </div>
 
-                <!-- ================= RIGHT SUMMARY ================= -->
+                <!-- ✅ RIGHT SUMMARY -->
                 <div class="col-lg-5">
                     <div class="checkout-form-wrapper">
 
                         <div class="order-sum-area">
-                            <div class="cart-menu">
 
-                                <div class="cart-body">
-                                    <ul id="orderSummaryList">
+                            <form>
+                                <div class="cart-menu">
 
-                                        <!-- ✅ Venue (Always Visible) -->
-                                        <li class="single-item" id="venueSummaryItem"></li>
-
-                                        <!-- ✅ Menu (Hidden until selection) -->
-                                        <li class="single-item d-none" id="menuSummaryItem"></li>
-
-                                    </ul>
-                                </div>
-
-                                <div class="cart-footer">
-                                    <div class="pricing-area mb-40">
+                                    <!-- ✅ VENUE SUMMARY -->
+                                    <div class="cart-body">
                                         <ul>
-                                            <li><strong>Total</strong> <strong id="finalTotal">0.00</strong></li>
+                                            <li class="single-item" id="venueSummaryItem">
+                                                <!-- ✅ VENUE AUTO LOADS HERE -->
+                                            </li>
                                         </ul>
                                     </div>
 
-                                    <button type="submit" class="primary-btn1">
-                                        <span>Place Your Order</span>
-                                    </button>
+                                    <!-- ✅ CART FOOTER -->
+                                    <div class="cart-footer">
+                                        <div class="pricing-area mb-40">
+                                            <ul>
+
+                                                <li>
+                                                    <div class="coupon-area">
+                                                        <span>Coupon Code</span>
+                                                        <div class="form-inner d-flex gap-2">
+                                                            <input type="text" id="couponInput" class="form-control">
+                                                            <button type="button" class="apply-btn btn btn-dark btn-sm">
+                                                                Apply
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <strong>Total</strong>
+                                                    <strong> <span id="totalAmount">0.00</span></strong>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+
+                                        <button type="submit" id="placeOrderBtn" class="primary-btn1">
+                                            Place Your Order
+                                        </button>
+
+                                    </div>
+
                                 </div>
+                            </form>
 
-                            </div>
                         </div>
-
                     </div>
                 </div>
 
             </div>
         </div>
     </div>
-    <!-- Checkout Page End -->
+    <!-- ✅ CHECKOUT PAGE END -->
+
 
 
     <!-- home1 Footer Section Start-->
@@ -636,6 +699,8 @@
     <script src="assets/js/helper.js"></script>
     <script src="assets/js/custom-calendar.js"></script>
     <script src="assets/js/custom.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <script defer
         src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015"
         integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ=="
@@ -656,6 +721,7 @@
     <script src="assets/js/module/packages-grid.js"></script>
     <script src="assets/js/module/package-details.js"></script>
     <script src="assets/js/module/booking.js"></script>
+
 
 
 
