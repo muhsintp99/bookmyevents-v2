@@ -11,15 +11,14 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <style>
-    body,
-    html {
+    body, html {
       height: 100%;
       margin: 0;
       font-family: "Poppins", sans-serif;
     }
 
     .bg-right {
-      background-image: url('https://images.pexels.com/photos/50675/banquet-wedding-society-deco-50675.jpeg?_gl=1*5mhhm7*_ga*OTQzMjkzNjEzLjE3NjE5OTQzMTY.*_ga_8JE65Q40S6*czE3NjM5OTczNTUkbzMkZzEkdDE3NjM5OTc0NTYkajMxJGwwJGgw');
+      background-image: url('https://images.pexels.com/photos/50675/banquet-wedding-society-deco-50675.jpeg');
       background-size: cover;
       background-position: center;
       min-height: 100vh;
@@ -87,7 +86,6 @@
       border-color: #f32626 !important;
     }
   </style>
-
 </head>
 
 <body>
@@ -99,10 +97,9 @@
       <div class="col-md-6 d-flex align-items-center">
         <div class="register-wrapper">
 
-          <!-- SAME LOGO AS LOGIN PAGE -->
-           <a href="./index.html">
+          <a href="./index.html">
             <img class="img-fluid" src="assets/img/footer-logo.svg" alt="Book my event">
-           </a>
+          </a>
 
           <div id="registerMsg"></div>
 
@@ -147,7 +144,7 @@
 
             <button class="btn-register mb-3" type="submit">Register</button>
 
-            <p class="mt-2">Already have an account?  
+            <p class="mt-2">Already have an account?
               <a class="text-decoration-none" href="login.html">Login here</a>
             </p>
 
@@ -158,18 +155,17 @@
 
       <!-- RIGHT IMAGE -->
       <div class="col-md-6 bg-right d-none d-md-block"></div>
-
     </div>
   </div>
 
-
+  <!-- ========================== REGISTER SCRIPT ============================== -->
   <script>
+    const API_BASE_URL = "https://api.bookmyevent.ae/api";
+
     // SHOW / HIDE PASSWORD
     function togglePassword(id, icon) {
       const field = document.getElementById(id);
-      const isPassword = field.type === "password";
-      field.type = isPassword ? "text" : "password";
-
+      field.type = field.type === "password" ? "text" : "password";
       icon.classList.toggle("bi-eye");
       icon.classList.toggle("bi-eye-slash");
     }
@@ -188,7 +184,7 @@
       });
     })();
 
-    // REGISTER API REQUEST
+    // REGISTER USER
     document.getElementById("registerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!e.target.checkValidity()) return;
@@ -205,7 +201,7 @@
       msg.innerHTML = `<div class='alert alert-info'>Creating your account...</div>`;
 
       try {
-        const res = await fetch("https://api.bookmyevent.ae/api/auth/register", {
+        const res = await fetch(`${API_BASE_URL}/auth/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(bodyData),
@@ -213,11 +209,21 @@
 
         const data = await res.json();
 
-        if (res.ok) {
-          msg.innerHTML = `<div class='alert alert-success'>Registration successful!</div>`;
-        } else {
+        if (!res.ok) {
           msg.innerHTML = `<div class='alert alert-danger'>${data.message}</div>`;
+          return;
         }
+
+        // SUCCESS UI
+        msg.innerHTML = `<div class='alert alert-success'>Registration successful! Logging you in...</div>`;
+
+        // AUTO-LOGIN AFTER REGISTER
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        setTimeout(() => {
+          // REDIRECT TO PREVIOUS PAGE OR HOME
+          window.location.href = document.referrer || "index.html";
+        }, 1200);
 
       } catch (error) {
         msg.innerHTML = `<div class='alert alert-danger'>Something went wrong!</div>`;

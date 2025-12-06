@@ -333,19 +333,34 @@ document.addEventListener("click", function (e) {
 });
 
 /* ================= FINAL SEARCH ================= */
-document.querySelector(".filter-input").addEventListener("submit", function (e) {
-    e.preventDefault();
+// document.querySelector(".filter-input").addEventListener("submit", function (e) {
+//     e.preventDefault();
 
-    const destination = document.querySelector(".destination-dropdown input").value;
-    const date = document.querySelector("[name='inOut']").value;
-    const activeModule = document.querySelector("#filterList .active");
+//     const destination = document.querySelector(".destination-dropdown input").value;
+//     const date = document.querySelector("[name='inOut']").value;
+//     const activeModule = document.querySelector("#filterList .active");
 
-    console.clear();
-    console.log("✅ FINAL SEARCH DATA");
-    console.log("📍 Destination:", destination);
-    console.log("📅 Date:", date);
-    console.log("📂 Category:", SELECTED_CATEGORY.title);
-    console.log("🆔 Category ID:", SELECTED_CATEGORY.id);
-    console.log("🧩 Module:", activeModule.dataset.title);
-    console.log("🆔 Module ID:", activeModule.dataset.id);
-});
+//     console.clear();
+//     console.log("✅ FINAL SEARCH DATA");
+//     console.log("📍 Destination:", destination);
+//     console.log("📅 Date:", date);
+//     console.log("📂 Category:", SELECTED_CATEGORY.title);
+//     console.log("🆔 Category ID:", SELECTED_CATEGORY.id);
+//     console.log("🧩 Module:", activeModule.dataset.title);
+//     console.log("🆔 Module ID:", activeModule.dataset.id);
+// });
+
+
+const filterForm = document.querySelector(".filter-input");
+if (filterForm) {
+    filterForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const destination = document.querySelector(".destination-dropdown input").value;
+        const date = document.querySelector("[name='inOut']").value;
+        const activeModule = document.querySelector("#filterList .active");
+
+        console.log("FINAL SEARCH:");
+        console.log(destination, date, activeModule?.dataset?.title);
+    });
+}

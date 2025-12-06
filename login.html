@@ -7,7 +7,6 @@
   <title>Login - Book My Events</title>
   <link rel="shortcut icon" href="./logo/favicon.ico" type="image/x-icon">
 
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -24,7 +23,7 @@
     }
 
     .bg-right {
-      background-image: url('https://images.pexels.com/photos/169190/pexels-photo-169190.jpeg?_gl=1*1trrv6r*_ga*OTQzMjkzNjEzLjE3NjE5OTQzMTY.*_ga_8JE65Q40S6*czE3NjM5OTczNTUkbzMkZzEkdDE3NjM5OTczNjgkajQ3JGwwJGgw');
+      background-image: url('https://images.pexels.com/photos/169190/pexels-photo-169190.jpeg');
       background-size: cover;
       background-position: center;
       min-height: 100vh;
@@ -96,6 +95,7 @@
     <div class="row">
       <!-- RIGHT IMAGE -->
       <div class="col-md-6 bg-right d-none d-md-block"></div>
+
       <!-- LEFT FORM -->
       <div class="col-md-6 d-flex align-items-center">
         <div class="login-wrapper">
@@ -123,29 +123,30 @@
 
             <a href="#" class="d-block mb-4 text-decoration-none">Forgot password?</a>
 
-            <p>Don't have an account? <a class="text-decoration-none" href="register.html">Register here</a></p>
+            <p>Don't have an account?
+              <a class="text-decoration-none" href="register.html">Register here</a>
+            </p>
 
           </form>
 
         </div>
       </div>
-
-
-
     </div>
   </div>
 
+  <!-- ========================== JS SCRIPT ============================== -->
   <script>
+    const API_BASE_URL = "https://api.bookmyevent.ae/api";
+
     // SHOW / HIDE PASSWORD
     function togglePassword(id, icon) {
       const field = document.getElementById(id);
-      const isPassword = field.type === "password";
-      field.type = isPassword ? "text" : "password";
+      field.type = field.type === "password" ? "text" : "password";
       icon.classList.toggle("bi-eye");
       icon.classList.toggle("bi-eye-slash");
     }
 
-    // BOOTSTRAP VALIDATION SCRIPT
+    // BOOTSTRAP VALIDATION
     (() => {
       const forms = document.querySelectorAll('.needs-validation');
       Array.from(forms).forEach(form => {
@@ -159,22 +160,12 @@
       });
     })();
 
-    // LOGIN API
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      if (!e.target.checkValidity()) {
-        return;
-      }
-
-      const email = document.getElementById("loginEmail").value;
-      const password = document.getElementById("loginPassword").value;
-      const loginMsg = document.getElementById("loginMsg");
-
-      loginMsg.innerHTML = `<div class='alert alert-info'>Checking...</div>`;
-
+    // ==================================================
+    // LOGIN HANDLER
+    // ==================================================
+    async function loginUser(email, password) {
       try {
-        const res = await fetch("https://api.bookmyevent.ae/api/auth/login", {
+        const res = await fetch(`${API_BASE_URL}/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
@@ -182,13 +173,43 @@
 
         const data = await res.json();
 
-        if (res.ok) {
-          loginMsg.innerHTML = `<div class='alert alert-success'>Login Successful!</div>`;
-        } else {
-          loginMsg.innerHTML = `<div class='alert alert-danger'>${data.message}</div>`;
+        if (!res.ok) {
+          return { success: false, message: data.message || "Invalid credentials" };
         }
-      } catch {
-        loginMsg.innerHTML = `<div class='alert alert-danger'>Something went wrong!</div>`;
+
+        // SAVE USER IN LOCAL STORAGE
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        return { success: true, user: data.user };
+
+      } catch (error) {
+        return { success: false, message: "Server error! Please try again." };
+      }
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (!e.target.checkValidity()) return;
+
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+      const loginMsg = document.getElementById("loginMsg");
+
+      loginMsg.innerHTML = `<div class='alert alert-info'>Checking...</div>`;
+
+      const result = await loginUser(email, password);
+
+      if (result.success) {
+        loginMsg.innerHTML = `<div class='alert alert-success'>Login Successful! Redirecting...</div>`;
+
+        setTimeout(() => {
+          // REDIRECT TO PREVIOUS PAGE (fallback homepage)
+          window.location.href = document.referrer || "index.html";
+        }, 1200);
+
+      } else {
+        loginMsg.innerHTML = `<div class='alert alert-danger'>${result.message}</div>`;
       }
     });
   </script>
