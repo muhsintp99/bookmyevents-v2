@@ -798,12 +798,36 @@ document.getElementById("placeOrderBtn")?.addEventListener("click", async functi
             return;
         }
 
-        alert("✅ Booking Success!");
+        // SUCCESSFUL BOOKING
+        alert("✅ Booking Successful!");
 
-        // Redirect to payment or confirmation page
-        window.location.href =
-            `https://smartgateway.hdfcuat.bank.in/payment-page/order/ordeh_82d2b3fbb0b647a9ae79de7d62e2a3ad`;
-        // `${API_BASE_URL}/payment/create-payment-session?bookingId=${json.data._id}`;
+        const bookingId = json.data._id;
+
+        // 1️⃣ CREATE PAYMENT SESSION
+        const paymentResponse = await fetch(`${API_BASE_URL}/payment/create-payment-session`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ bookingId })
+        });
+
+        const paymentJson = await paymentResponse.json();
+        console.log("💳 PAYMENT SESSION RESPONSE:", paymentJson);
+
+        if (!paymentJson.success) {
+            alert("❌ Unable to create payment session");
+            return;
+        }
+
+        // 2️⃣ OPEN THE PAYMENT PAGE (HDFC SmartGateway)
+        const paymentUrl = paymentJson.payment_links.web;
+
+        if (!paymentUrl) {
+            alert("❌ Payment URL missing from backend response");
+            return;
+        }
+
+        window.location.href = paymentUrl;
+
 
     } catch (err) {
         console.error("❌ Booking Error:", err);
